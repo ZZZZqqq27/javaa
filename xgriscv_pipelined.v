@@ -10,7 +10,7 @@
 // ====================================================================
 
 `include "xgriscv_defines.v"
-module xgriscv_pipeline(
+module xgriscv_pipeline(//主模块
   input                   clk, reset,
   output[`ADDR_SIZE-1:0]  pcW);
   

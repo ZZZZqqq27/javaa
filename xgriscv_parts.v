@@ -27,7 +27,7 @@ module pcenr (
 endmodule
 
 // adder for address calculation
-module addr_adder (
+module addr_adder (//这种adder给取消
 	input  [`ADDR_SIZE-1:0] a, b,
 	output [`ADDR_SIZE-1:0] y);
 
@@ -86,7 +86,7 @@ module mux3 #(parameter WIDTH = 8)
 
   assign  y = s[1] ? d2 : (s[0] ? d1 : d0); 
 endmodule
-
+/*
 module mux4 #(parameter WIDTH = 8)
              (input  [WIDTH-1:0] d0, d1, d2, d3,
               input  [1:0]       s, 
@@ -138,8 +138,8 @@ module mux6 #(parameter WIDTH = 8)
 	  endcase
 	end
 endmodule
-
-module imm (
+ */
+module imm (  //把立即数扩展
 	input	[11:0]			iimm, //instr[31:20], 12 bits
 	input	[11:0]			simm, //instr[31:25, 11:7], 12 bits
 	input	[11:0]			bimm, //instrD[31], instrD[7], instrD[30:25], instrD[11:8], 12 bits
@@ -158,7 +158,7 @@ module imm (
 		default:			immout <= `XLEN'b0;
 	 endcase
 endmodule
-
+/*
 // shift left by 1 for address calculation
 module sl1(
 	input  [`ADDR_SIZE-1:0] a,
@@ -193,3 +193,4 @@ module ampattern (input [1:0] addr, input [1:0] swhb, output reg [3:0] amp); //a
     default: amp <= 4'b1111;// it shouldn't happen
   endcase
 endmodule
+*/

@@ -12,7 +12,6 @@
 
 module datapath(
 	input                    clk, reset,
-
 	input [`INSTR_SIZE-1:0]  instrF, 	 // from instructon memory
 	output[`ADDR_SIZE-1:0] 	 pcF, 		   // to instruction memory
 
