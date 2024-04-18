@@ -39,7 +39,7 @@ module controller(
   wire branch= (opcode == `OP_BRANCH);
   wire load	= (opcode == `OP_LOAD); 
   wire store	= (opcode == `OP_STORE);
-  wire addwithImm	= //(opcode == `OP_ADDI);
+  wire addwithImm	= (opcode == `OP_ADDI);
   wire addwith = (opcode == `OP_ADD);
 //下面的重复的用上面的代替
   wire beq		= branch && (funct3 == `FUNCT3_BEQ);
