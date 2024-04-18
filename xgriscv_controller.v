@@ -34,8 +34,8 @@ module controller(
 //先判断是什么type，
   wire LUI		= (opcode == `OP_LUI);
   wire AUIPC	= (opcode == `OP_AUIPC);
-  wire jal		= (opcode == `OP_JAL);//这里define里分别给出了，
-  wire jalr	= (opcode == `OP_JALR);
+  wire JAL		= (opcode == `OP_JAL);//这里define里分别给出了，
+  wire JALR	= (opcode == `OP_JALR);
   wire branch= (opcode == `OP_BRANCH);
   wire load	= (opcode == `OP_LOAD); 
   wire store	= (opcode == `OP_STORE);
@@ -77,8 +77,8 @@ module controller(
   wire xor		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_XOR);
   wire srl		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
   wire sra		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
-  wire or		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_OR);
-  wire and		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_AND);
+  wire OR		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_OR);
+  wire AND		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_AND);
 
   wire rs1_x0= (rs1 == 5'b00000);
   wire rd_x0 = (rd  == 5'b00000);
@@ -97,9 +97,9 @@ module controller(
 
   assign immctrl = {itype, stype, btype, utype, jtype};
 
-  assign jal = jal;
+  assign jal = JAL;
   
-  assign jalr = jalr;
+  assign jalr = JALR;
 
   //assign j = jal | jalr | btype;
 
