@@ -69,16 +69,16 @@ module controller(
   wire srli	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRLI);
   wire srai	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRAI);
 
-  wire add		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_ADD);
-  wire sub		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_SUB);
-  wire sll		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SLL);
-  wire slt		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SLT);
-  wire sltu	= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SLTU);
-  wire XOR		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_XOR);
-  wire srl		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
-  wire sra		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
-  wire OR		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_OR);
-  wire AND		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_AND);
+  wire add		= addrr && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_ADD);
+  wire sub		= addrr && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_SUB);
+  wire sll		= addrr && (funct3 == `FUNCT3_SLL);
+  wire slt		= addrr && (funct3 == `FUNCT3_SLT);
+  wire sltu	= addrr && (funct3 == `FUNCT3_SLTU);
+  wire XOR		= addrr && (funct3 == `FUNCT3_XOR);
+  wire srl		= addrr && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
+  wire sra		= addrr && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
+  wire OR		= addrr && (funct3 == `FUNCT3_OR);
+  wire AND		= addrr && (funct3 == `FUNCT3_AND);
 
   wire rs1_x0= (rs1 == 5'b00000);
   wire rd_x0 = (rd  == 5'b00000);
