@@ -45,7 +45,7 @@ module floprc #(parameter WIDTH = 8)
     else if (clear) q <= 0;
     else            q <= d;
 endmodule
-
+/*
 // flop with reset, enable and clear control
 module flopenrc #(parameter WIDTH = 8)
                  (input                  clk, reset,
@@ -70,7 +70,7 @@ module flopenr #(parameter WIDTH = 8)
     if      (reset) q <= 0;
     else if (en)    q <=  d;
 endmodule
-
+*/
 module mux2 #(parameter WIDTH = 8)
              (input  [WIDTH-1:0] d0, d1, 
               input              s, 
