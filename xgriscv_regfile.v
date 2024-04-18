@@ -14,7 +14,7 @@
 module regfile(
   input                      	clk,
   input  [`RFIDX_WIDTH-1:0]  	readaddress1, readaddress2,
-  output [`XLEN-1:0]          rd1, rd2,
+  output [`XLEN-1:0]          readdate1, readdata2,
 
   input                      	write, 
   input  [`RFIDX_WIDTH-1:0]  	writeaddress,
@@ -28,16 +28,16 @@ module regfile(
  
 
   always @(negedge clk)
-    if (write && wa3!=0)//0寄存器要一直留着0
+    if (write && writeaddress3!=0)//0寄存器要一直留着0
       begin
         rf[writeaddress] <= writedata;
         // DO NOT CHANGE THIS display LINE!!!
         // 不要修改下面这行display语句！！！
         /**********************************************************************/
-        $display("pc = %h: x%d = %h", pc, wa3, wd3);
+        $display("pc = %h: x%d = %h", pc, writeaddress, writedata);
         /**********************************************************************/
       end
 
-  assign rd1 = (ra1 != 0) ? rf[ra1] : 0;
-  assign rd2 = (ra2 != 0) ? rf[ra2] : 0;
+  assign readdata1 = (readaddress1 != 0) ? rf[readaddress1] : 0;
+  assign readdata2 = (readaddress2 != 0) ? rf[readaddress2] : 0;
 endmodule

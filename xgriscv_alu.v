@@ -17,10 +17,10 @@ module alu(
 	input [2:0]			aluctrl1, 
 
 	output reg [`XLEN-1:0]	aluout,
-	output       		overflow,
+	output       		overflow,//
 	output 			zero,//这个位置要用来判断是否跳转
-	output 			lt,
-	output 			ge
+	output 			lt,//
+	output 			ge//bge指令使用，
 	);
 
 	wire op_unsigned = ~aluctrl[3]&~aluctrl[2]&aluctrl[1]&~aluctrl[0]	//ALU_CTRL_ADDU	4'b0010
@@ -87,20 +87,20 @@ module alu(
 								aluout <= a[`XLEN-1];
 							else
 								aluout <= sum[`XLEN-1];
-							//$display("a:%8x, b:%8x, a-b:%8x slt:%b\n",a,b,sum,aluout);
+						
 						end
 		`ALU_CTRL_SLTU:	begin
 							aluout <= a[`XLEN-1:0]<b[`XLEN-1:0];
-							//$display("a:%8x, b:%8x, a-b:%8x sltu:%b\n",a,b,sum,aluout);
+							
 						end
 		`ALU_CTRL_XOR:	aluout <= XOR[`XLEN-1:0];
 		`ALU_CTRL_OR:	aluout <= OR[`XLEN-1:0];
 		`ALU_CTRL_AND:	aluout <= AND[`XLEN-1:0];
 		`ALU_CTRL_SRL: begin	aluout <= srl[`XLEN-1:0];
-						//$display("a:%8x, b:%8x, srl:%8x\n",a,b,srl);
+						
 						end
 		`ALU_CTRL_SRA: begin	aluout <= sra[`XLEN-1:0];
-						//$display("a:%8x, b:%8x, sra:%8x\n",a,b,sra);
+						
 						end
 		default: 			aluout <= `XLEN'b0; 
 	 endcase
