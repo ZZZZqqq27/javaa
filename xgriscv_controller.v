@@ -34,7 +34,7 @@ module controller(
 //先判断是什么type，
   wire LUI		= (opcode == `OP_LUI);
   wire AUIPC	= (opcode == `OP_AUIPC);
-  wire rv32_jal		= (opcode == `OP_JAL);//这里define里分别给出了，就分别
+  wire rv32_jal		= (opcode == `OP_JAL);//这里define里分别给出了，
   wire rv32_jalr	= (opcode == `OP_JALR);
   wire rv32_branch= (opcode == `OP_BRANCH);
   wire rv32_load	= (opcode == `OP_LOAD); 
@@ -42,47 +42,47 @@ module controller(
   wire rv32_addri	= (opcode == `OP_ADDI);
   wire rv32_addrr = (opcode == `OP_ADD);
 //下面的重复的用上面的代替
-  wire rv32_beq		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BEQ));
-  wire rv32_bne		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BNE));
-  wire rv32_blt		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BLT));
-  wire rv32_bge		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BGE));
-  wire rv32_bltu	= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BLTU));
-  wire rv32_bgeu	= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BGEU));
+  wire rv32_beq		= (opcode == `OP_BRANCH) && (funct3 == `FUNCT3_BEQ);
+  wire rv32_bne		= (opcode == `OP_BRANCH) && (funct3 == `FUNCT3_BNE);
+  wire rv32_blt		= (opcode == `OP_BRANCH) && (funct3 == `FUNCT3_BLT);
+  wire rv32_bge		= (opcode == `OP_BRANCH) && (funct3 == `FUNCT3_BGE);
+  wire rv32_bltu	= ((opcode == `OP_BRANCH) && (funct3 == `FUNCT3_BLTU));
+  wire rv32_bgeu	= ((opcode == `OP_BRANCH) && (funct3 == `FUNCT3_BGEU));
 
-  wire rv32_lb		= ((opcode == `OP_LOAD) & (funct3 == `FUNCT3_LB));
-  wire rv32_lh		= ((opcode == `OP_LOAD) & (funct3 == `FUNCT3_LH));
-  wire rv32_lw		= ((opcode == `OP_LOAD) & (funct3 == `FUNCT3_LW));
-  wire rv32_lbu		= ((opcode == `OP_LOAD) & (funct3 == `FUNCT3_LBU));
-  wire rv32_lhu		= ((opcode == `OP_LOAD) & (funct3 == `FUNCT3_LHU));
+  wire rv32_lb		= ((opcode == `OP_LOAD) && (funct3 == `FUNCT3_LB));
+  wire rv32_lh		= ((opcode == `OP_LOAD) && (funct3 == `FUNCT3_LH));
+  wire rv32_lw		= ((opcode == `OP_LOAD) && (funct3 == `FUNCT3_LW));
+  wire rv32_lbu		= ((opcode == `OP_LOAD) && (funct3 == `FUNCT3_LBU));
+  wire rv32_lhu		= ((opcode == `OP_LOAD) && (funct3 == `FUNCT3_LHU));
 
-  wire rv32_sb		= ((opcode == `OP_STORE) & (funct3 == `FUNCT3_SB));
-  wire rv32_sh		= ((opcode == `OP_STORE) & (funct3 == `FUNCT3_SH));
-  wire rv32_sw		= ((opcode == `OP_STORE) & (funct3 == `FUNCT3_SW));
+  wire rv32_sb		= ((opcode == `OP_STORE) && (funct3 == `FUNCT3_SB));
+  wire rv32_sh		= ((opcode == `OP_STORE) && (funct3 == `FUNCT3_SH));
+  wire rv32_sw		= ((opcode == `OP_STORE) && (funct3 == `FUNCT3_SW));
 
-  wire rv32_addi	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_ADDI));
-  wire rv32_slti	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_SLTI));
-  wire rv32_sltiu	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_SLTIU));
-  wire rv32_xori	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_XORI));
-  wire rv32_ori	  = ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_ORI));
-  wire rv32_andi	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_ANDI));
-  wire rv32_slli	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_SL) & (funct7 == `FUNCT7_SLLI));
-  wire rv32_srli	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_SR) & (funct7 == `FUNCT7_SRLI));
-  wire rv32_srai	= ((opcode == `OP_ADDI) & (funct3 == `FUNCT3_SR) & (funct7 == `FUNCT7_SRAI));
+  wire rv32_addi	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_ADDI));
+  wire rv32_slti	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_SLTI));
+  wire rv32_sltiu	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_SLTIU));
+  wire rv32_xori	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_XORI));
+  wire rv32_ori	  = ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_ORI));
+  wire rv32_andi	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_ANDI));
+  wire rv32_slli	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_SL) && (funct7 == `FUNCT7_SLLI));
+  wire rv32_srli	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRLI));
+  wire rv32_srai	= ((opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRAI));
 
-  wire rv32_add		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_ADD) & (funct7 == `FUNCT7_ADD));
-  wire rv32_sub		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_ADD) & (funct7 == `FUNCT7_SUB));
-  wire rv32_sll		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_SLL));
-  wire rv32_slt		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_SLT));
-  wire rv32_sltu	= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_SLTU));
-  wire rv32_xor		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_XOR));
-  wire rv32_srl		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_SR) & (funct7 == `FUNCT7_SRL));
-  wire rv32_sra		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_SR) & (funct7 == `FUNCT7_SRA));
-  wire rv32_or		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_OR));
-  wire rv32_and		= ((opcode == `OP_ADD) & (funct3 == `FUNCT3_AND));
+  wire rv32_add		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_ADD));
+  wire rv32_sub		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_SUB));
+  wire rv32_sll		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_SLL));
+  wire rv32_slt		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_SLT));
+  wire rv32_sltu	= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_SLTU));
+  wire rv32_xor		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_XOR));
+  wire rv32_srl		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL));
+  wire rv32_sra		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA));
+  wire rv32_or		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_OR));
+  wire rv32_and		= ((opcode == `OP_ADD) && (funct3 == `FUNCT3_AND));
 
   wire rv32_rs1_x0= (rs1 == 5'b00000);
   wire rv32_rd_x0 = (rd  == 5'b00000);
-  wire rv32_nop		= rv32_addi & rv32_rs1_x0 & rv32_rd_x0 & (imm == 12'b0); //addi x0, x0, 0 is nop
+  wire rv32_nop		= rv32_addi && rv32_rs1_x0 && rv32_rd_x0 && (imm == 12'b0); //addi x0, x0, 0 is nop
 
   assign itype = rv32_load | rv32_addri | rv32_jalr;
 
