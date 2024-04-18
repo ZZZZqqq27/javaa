@@ -74,7 +74,7 @@ module controller(
   wire sll		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SLL);
   wire slt		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SLT);
   wire sltu	= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SLTU);
-  wire xor		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_XOR);
+  wire XOR		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_XOR);
   wire srl		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
   wire sra		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
   wire OR		= (opcode == `OP_ADD) && (funct3 == `FUNCT3_OR);
