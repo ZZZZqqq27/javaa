@@ -19,7 +19,7 @@ module imem(input  [`ADDR_SIZE-1:0]   address,
   assign readData = RAM[address[`ADDR_SIZE-1:2]]; // instruction size aligned
 endmodule
 
-/*
+
 module dmem(input           	         clk, we,
             input  [`XLEN-1:0]        a, wd,
             input  [`ADDR_SIZE-1:0] 	 pc,
@@ -60,7 +60,8 @@ module dmem(input           	         clk, we,
        
   	  end
 endmodule
-*/
+
+/*
 module dmem(
     input            clk, we,
     input  [`XLEN-1:0] a, wd,
@@ -99,3 +100,4 @@ always @(posedge clk) begin
 end
 
 endmodule
+*/
