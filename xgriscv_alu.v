@@ -18,7 +18,7 @@ module alu(
 
 	output reg [`XLEN-1:0]	aluout,
 	output       		overflow,
-	output 			zero,
+	output 			zero,//这个位置要用来判断是否跳转
 	output 			lt,
 	output 			ge
 	);
