@@ -18,9 +18,9 @@ endmodule
 
 module mux3to1 
 (
-    input  [WIDTH-1:0] d0, d1, d2,
+    input  [31:0] d0, d1, d2,
     input  [1:0]       select,
-    output reg [WIDTH-1:0] y
+    output reg [31:0] y
 );
 
 always @(*) begin
