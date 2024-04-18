@@ -91,7 +91,7 @@ module controller(
 
   wire utype = LUI || AUIPC;
 
-  wire jtype = jal;
+  wire jtype = JAL;
 
 	reg jtmp;
 
