@@ -7,7 +7,7 @@ module mux2to1
 );
 
 always @(*) begin
-    case (s)
+    case (select)
         1'b0: y = d0;
         1'b1: y = d1;
     endcase
@@ -17,9 +17,20 @@ endmodule
 
 
 module mux3to1 
-             (input  [31:0] d0, d1, d2,
-              input  [1:0]       select, 
-              output [31:0] y);
+(
+    input  [WIDTH-1:0] d0, d1, d2,
+    input  [1:0]       select,
+    output reg [WIDTH-1:0] y
+);
 
-  assign  y = s[1] ? d2 : (s[0] ? d1 : d0); 
+always @(*) begin
+    case (select)
+        2'b00: y = d0;
+        2'b01: y = d1;
+        2'b10: y = d2;
+        default: y = d0;  // 默认情况可以根据需要调整
+    endcase
+end
+
 endmodule
+

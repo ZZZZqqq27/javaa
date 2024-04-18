@@ -47,7 +47,7 @@ module datapath(
 	// next PC logic (operates in fetch and decode)
 	wire [`ADDR_SIZE-1:0]	 pcplus4F, nextpcF, pcbranchD, pcadder2aD, pcadder2bD, pcbranch0D;
 	//mux2 #(`ADDR_SIZE)	    pcsrcmux(pcplus4F, pcbranchD, pcsrcD, nextpcF);
-	mux2 #(`ADDR_SIZE)	    pcsrcmux(pcplus4F, pcbranchD, pcsrc, nextpcF);
+	mux2to1	    pcsrcmux(pcplus4F, pcbranchD, pcsrc, nextpcF);
 	
 	// Fetch stage logic
 	pcenr      	 pcreg(clk, reset, 1'b1, nextpcF, pcF);
@@ -124,7 +124,7 @@ module datapath(
 		
 	wire B;
 	assign B = bE & aluoutE[0];
-	mux2 #(`XLEN) brmux(aluoutE, PCoutE, B, pcbranchD);			 // pcsrc mux	
+	mux2to1 brmux(aluoutE, PCoutE, B, pcbranchD);			 // pcsrc mux	
 
 	assign pcsrc = jE | B;
 		///////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ module datapath(
   floprc #(`RFIDX_WIDTH)  pr2W(clk, reset, flushW, rdM, rdW);
   floprc #(`ADDR_SIZE)	   pr3W(clk, reset, flushW, pcM, pcW);            // pc
   floprc #(`ADDR_SIZE)	   pr4W(clk, reset, flushW, pcplus4M, pcplus4W);            // pc+4
-	mux3to1 #(`XLEN) wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		
+	mux3to1  wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		
 	assign waddrW = rdW;
 	//assign pcsrcD = jW;
 	//assign pcsrc = jW | B;
