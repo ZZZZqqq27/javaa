@@ -18,7 +18,7 @@ module xgriscv_pipeline(//主模块
   wire [31:0]    pcF, pcM;
   wire           memwrite;
   wire [3:0]     amp;
-  wire [31:0]    addr, writedata, readdata;
+  wire [31:0]    addr, writedata, readdata;//从内存中读出来的数据
   wire	[1:0]				lwhb;
   wire	[1:0]				swhb;
 	wire				lu;
@@ -35,7 +35,7 @@ endmodule
 // xgriscv: a pipelined riscv processor
 module xgriscv(input         			        clk, reset,
                output [31:0] 			        pcF,
-               input  [`INSTR_SIZE-1:0] instr,
+               input  [`INSTR_SIZE-1:0] instr,//把instruction送进来
                output					              memwrite,
                output [3:0]  			        amp,
                output [`ADDR_SIZE-1:0] 	daddr, 

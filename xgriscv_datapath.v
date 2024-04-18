@@ -55,40 +55,40 @@ module datapath(
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// IF/ID pipeline registers
-	wire [`INSTR_SIZE-1:0]	instrD;
+	wire [`INSTR_SIZE-1:0]	INSTRUCTION;
 	wire [`ADDR_SIZE-1:0]	pcD, pcplus4D;
 	wire flushD = pcsrc; 
 	wire regwriteW;
 
-	floprc #(`INSTR_SIZE) 	pr1D(clk, reset, flushD, instrF, instrD);     // instruction
+	floprc #(`INSTR_SIZE) 	pr1D(clk, reset, flushD, instrF, INSTRUCTION);     // instruction,//contro register
 	floprc #(`ADDR_SIZE)	  pr2D(clk, reset, flushD, pcF, pcD);           // pc
 	floprc #(`ADDR_SIZE)	  pr3D(clk, reset, flushD, pcplus4F, pcplus4D); // pc+4
 
 	// Decode stage logic
 	wire [`RFIDX_WIDTH-1:0] rs2D;
-	assign  opD 	= instrD[6:0];
-	assign  rdD     = instrD[11:7];
-	assign  funct3D = instrD[14:12];
-	assign  rs1D    = instrD[19:15];
-	assign  rs2D   	= instrD[24:20];
-	assign  funct7D = instrD[31:25];
-	assign  immD    = instrD[31:20];
+	assign  opD 	= INSTRUCTION[6:0];
+	assign  rdD     = INSTRUCTION[11:7];
+	assign  funct3D = INSTRUCTION[14:12];
+	assign  rs1D    = INSTRUCTION[19:15];
+	assign  rs2D   	= INSTRUCTION[24:20];
+	assign  funct7D = INSTRUCTION[31:25];
+	assign  immD    = INSTRUCTION[31:20];
 
 	// immediate generate
-	wire [11:0]  iimmD = instrD[31:20];
-	wire [11:0]		simmD	= {instrD[31:25],instrD[11:7]};//instr[31:25, 11:7], 12 bits
-	wire [11:0]  bimmD	= {instrD[31],instrD[7],instrD[30:25],instrD[11:8]};//instrD[31], instrD[7], instrD[30:25], instrD[11:8], 12 bits
-	wire [19:0]		uimmD	= instrD[31:12];
-	wire [19:0]  jimmD	= {instrD[31],instrD[19:12],instrD[20],instrD[30:21]};
+	wire [11:0]  iimmD = INSTRUCTION[31:20];
+	wire [11:0]		simmD	= {INSTRUCTION[31:25],INSTRUCTION[11:7]};//根据每个
+	wire [11:0]  bimmD	= {INSTRUCTION[31],INSTRUCTION[7],INSTRUCTION[30:25],INSTRUCTION[11:8]};//INSTRUCTION[31], INSTRUCTION[7], INSTRUCTION[30:25], INSTRUCTION[11:8], 12 bits
+	wire [19:0]		uimmD	= INSTRUCTION[31:12];
+	wire [19:0]  jimmD	= {INSTRUCTION[31],INSTRUCTION[19:12],INSTRUCTION[20],INSTRUCTION[30:21]};
 	wire [`XLEN-1:0]	immoutD, shftimmD;
 	wire [`XLEN-1:0]	rdata1D, rdata2D, wdataW;
 	wire [`RFIDX_WIDTH-1:0]	waddrW;
 
 	imm 	im(iimmD, simmD, bimmD, uimmD, jimmD, immctrlD, immoutD);
-
-	// register file (operates in decode and writeback)
+	//对立即数进行扩展
+	
 	regfile rf(clk, rs1D, rs2D, rdata1D, rdata2D, regwriteW, waddrW, wdataW, pcW);
-
+	//寄存器读写数据
 	///////////////////////////////////////////////////////////////////////////////////
 	// ID/EX pipeline registers
 
