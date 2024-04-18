@@ -10,7 +10,7 @@
 // ====================================================================
 
 `include "xgriscv_defines.v"
-
+//在进行解码后，要产生控制信号
 module controller(
   input                     clk, reset,
   input [6:0]	              opcode,
@@ -30,17 +30,18 @@ module controller(
   output [1:0]              lwhb, swhb,
   output                    memtoreg, regwrite  // for the WB stage
   );
-
-  wire rv32_lui		= (opcode == `OP_LUI);
-  wire rv32_auipc	= (opcode == `OP_AUIPC);
-  wire rv32_jal		= (opcode == `OP_JAL);
+  //输出只用
+//先判断是什么type，
+  wire LUI		= (opcode == `OP_LUI);
+  wire AUIPC	= (opcode == `OP_AUIPC);
+  wire rv32_jal		= (opcode == `OP_JAL);//这里define里分别给出了，就分别
   wire rv32_jalr	= (opcode == `OP_JALR);
   wire rv32_branch= (opcode == `OP_BRANCH);
   wire rv32_load	= (opcode == `OP_LOAD); 
   wire rv32_store	= (opcode == `OP_STORE);
   wire rv32_addri	= (opcode == `OP_ADDI);
   wire rv32_addrr = (opcode == `OP_ADD);
-
+//下面的重复的用上面的代替
   wire rv32_beq		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BEQ));
   wire rv32_bne		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BNE));
   wire rv32_blt		= ((opcode == `OP_BRANCH) & (funct3 == `FUNCT3_BLT));
@@ -88,7 +89,7 @@ module controller(
   wire stype = rv32_store;
 
 
-  wire utype = rv32_lui | rv32_auipc;
+  wire utype = LUI | AUIPC;
 
   wire jtype = rv32_jal;
 
@@ -106,10 +107,10 @@ module controller(
 
   assign pcsrc = 0;
 
-  assign alusrca = rv32_lui ? 2'b01 : (rv32_jal||rv32_auipc ? 2'b10 : 2'b00);
+  assign alusrca = LUI ? 2'b01 : (rv32_jal||AUIPC ? 2'b10 : 2'b00);
   //assign alusrca = 2'b00;
 
-  assign alusrcb = rv32_lui || rv32_auipc || itype || rv32_load || rv32_store || rv32_jalr||rv32_jal;
+  assign alusrcb = LUI || AUIPC || itype || rv32_load || rv32_store || rv32_jalr||rv32_jal;
 //0:reg2 1:imm
 
   assign memwrite = rv32_store;
@@ -122,7 +123,7 @@ module controller(
 
   assign memtoreg = rv32_load;
 
-  assign regwrite = rv32_lui | rv32_auipc | rv32_addi | rv32_addrr | itype | rv32_jalr | rv32_jal;
+  assign regwrite = LUI | AUIPC | rv32_addi | rv32_addrr | itype | rv32_jalr | rv32_jal;
 
 
   always @(*)	begin
