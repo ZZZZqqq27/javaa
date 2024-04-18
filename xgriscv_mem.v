@@ -97,7 +97,7 @@ always @(posedge clk) begin
             2'b10:  // Store a halfword
                 RAM[addr_index] <= (RAM[addr_index] & 32'hFFFF0000) | (wd & 32'h0000FFFF);
             2'b01:  // Store a byte
-                RAM[addr_index]< = (RAM[addr_index] & \~(32'hFF << byte_offset)) | ((wd & 32'hFF) << byte_offset);
+                RAM[addr_index]<= (RAM[addr_index] & \~(32'hFF << byte_offset)) | ((wd & 32'hFF) << byte_offset);
         endcase
     end
 end
