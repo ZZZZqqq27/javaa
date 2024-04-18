@@ -19,17 +19,17 @@ module pcenr (
 	output reg [`XLEN-1:0]	q);
  
 	always @(posedge clk, posedge reset)
-	// if      (reset) q <= 0;
+	
     if (reset) 
-    	q <= `ADDR_SIZE'h00000000 ;
+    	q <= 32'h00000000 ;
     else if (en)    
     	q <=  d;
 endmodule
 
 // adder for address calculation
 module addr_adder (//这种adder给取消
-	input  [`ADDR_SIZE-1:0] a, b,
-	output [`ADDR_SIZE-1:0] y);
+	input  [31:0] a, b,
+	output [31:0] y);
 
 	assign  y = a + b;
 endmodule
@@ -45,32 +45,7 @@ module floprc #(parameter WIDTH = 8)
     else if (clear) q <= 0;
     else            q <= d;
 endmodule
-/*
-// flop with reset, enable and clear control
-module flopenrc #(parameter WIDTH = 8)
-                 (input                  clk, reset,
-                  input                  en, clear,
-                  input      [WIDTH-1:0] d, 
-                  output reg [WIDTH-1:0] q);
- 
-  always @(posedge clk, posedge reset)
-    if      (reset) q <= 0;
-    else if (clear) q <= 0;
-    else if (en)    q <= d;
-endmodule
 
-// flop with reset and enable control
-module flopenr #(parameter WIDTH = 8)
-                (input                  clk, reset,
-                 input                  en,
-                 input      [WIDTH-1:0] d, 
-                 output reg [WIDTH-1:0] q);
- 
-  always @(posedge clk, posedge reset)
-    if      (reset) q <= 0;
-    else if (en)    q <=  d;
-endmodule
-*/
 module mux2 #(parameter WIDTH = 8)
              (input  [WIDTH-1:0] d0, d1, 
               input              s, 
@@ -86,63 +61,11 @@ module mux3 #(parameter WIDTH = 8)
 
   assign  y = s[1] ? d2 : (s[0] ? d1 : d0); 
 endmodule
-/*
-module mux4 #(parameter WIDTH = 8)
-             (input  [WIDTH-1:0] d0, d1, d2, d3,
-              input  [1:0]       s, 
-              output reg [WIDTH-1:0] y);
 
-	always @( * )
-	begin
-      case(s)
-         2'b00: y <= d0;
-         2'b01: y <= d1;
-         2'b10: y <= d2;
-         2'b11: y <= d3;
-      endcase
-	end
-endmodule
-
-module mux5 #(parameter WIDTH = 8)
-             (input		[WIDTH-1:0] d0, d1, d2, d3, d4,
-              input		[2:0]       s, 
-              output reg	[WIDTH-1:0] y);
-
-	always @( * )
-	begin
-      case(s)
-	    3'b000: y <= d0;
-	    3'b001: y <= d1;
-	    3'b010: y <= d2;
-	    3'b011: y <= d3;
-	    3'b100: y <= d4;
-      endcase
-//    $display("mux5 d0=%h, d1=%h, d2=%h, d3=%h, d4=%h, s=%b, y=%h", d0,d1,d2,d3,d4,s,y);
-    end  
-endmodule
-
-module mux6 #(parameter WIDTH = 8)
-           (input  [WIDTH-1:0] 	d0, d1, d2, d3, d4, d5,
-            input  [2:0] 		s,
-         	  output reg [WIDTH-1:0]	y);
-
-	always@( * )
-	begin
-	  case(s)
-		3'b000: y <= d0;
-		3'b001: y <= d1;
-		3'b010: y <= d2;
-		3'b011: y <= d3;
-		3'b100: y <= d4;
-		3'b101: y <= d5;
-	  endcase
-	end
-endmodule
- */
 module imm (  //把立即数扩展
-	input	[11:0]			iimm, //instr[31:20], 12 bits
-	input	[11:0]			simm, //instr[31:25, 11:7], 12 bits
-	input	[11:0]			bimm, //instrD[31], instrD[7], instrD[30:25], instrD[11:8], 12 bits
+	input	[11:0]			iimm, 
+	input	[11:0]			simm, 
+	input	[11:0]			bimm, 
 	input	[19:0]			uimm,
 	input	[19:0]			jimm,
 	input	[4:0]			 immctrl,
