@@ -119,8 +119,8 @@ module datapath(
 	mux2to1  srcbmux(srcb1E, immoutE, alusrcbE, srcbE);			 // alu src b mux
 	wire[`ADDR_SIZE-1:0] PCoutE;
 
-	alu alu(srcaE, srcbE, 5'b0, aluctrlE, aluctrl1E, aluoutE, overflowE, zeroE, ltE, geE);
-	alu alu1(pcE, immoutE, 5'b0, `ALU_CTRL_ADD, 3'b000, PCoutE, overflowE, zeroE, ltE, geE);
+	alu alu(srcaE, srcbE,  aluctrlE, aluctrl1E, aluoutE, overflowE, zeroE, ltE, geE);
+	alu alu1(pcE, immoutE,  `ALU_CTRL_ADD, 3'b000, PCoutE, overflowE, zeroE, ltE, geE);
 		
 	wire B;
 	assign B = bE & aluoutE[0];

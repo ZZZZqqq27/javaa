@@ -41,44 +41,23 @@ module controller(
   wire store	= (opcode == `OP_STORE);
   wire addwithImm	= (opcode == `OP_ADDI);
   wire addwith = (opcode == `OP_ADD);
-//下面的重复的用上面的代替
- // wire beq		= branch && (funct3 == `FUNCT3_BEQ);
-//  wire bne		= branch && (funct3 == `FUNCT3_BNE);
- // wire blt		= branch && (funct3 == `FUNCT3_BLT);
-  //wire bge		= branch && (funct3 == `FUNCT3_BGE);
+
+
   wire bltu	= branch && (funct3 == `FUNCT3_BLTU);
   wire bgeu	= branch && (funct3 == `FUNCT3_BGEU);
 
-  wire lb		= (opcode == `OP_LOAD) && (funct3 == `FUNCT3_LB);
-  wire lh		= (opcode == `OP_LOAD) && (funct3 == `FUNCT3_LH);
-  wire lw		= (opcode == `OP_LOAD) && (funct3 == `FUNCT3_LW);
-  wire lbu		= (opcode == `OP_LOAD) && (funct3 == `FUNCT3_LBU);
-  wire lhu		= (opcode == `OP_LOAD) && (funct3 == `FUNCT3_LHU);
+  wire lb		= load && (funct3 == `FUNCT3_LB);
+  wire lh		= load && (funct3 == `FUNCT3_LH);
+  wire lw		= load && (funct3 == `FUNCT3_LW);
+  wire lbu		= load && (funct3 == `FUNCT3_LBU);
+  wire lhu		= load && (funct3 == `FUNCT3_LHU);
 
-  wire sb		= (opcode == `OP_STORE) && (funct3 == `FUNCT3_SB);
-  wire sh		= (opcode == `OP_STORE) && (funct3 == `FUNCT3_SH);
-  wire sw		= (opcode == `OP_STORE) && (funct3 == `FUNCT3_SW);
+  wire sb		= store && (funct3 == `FUNCT3_SB);
+  wire sh		= store && (funct3 == `FUNCT3_SH);
+  wire sw		= store && (funct3 == `FUNCT3_SW);
 
-  wire addi	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_ADDI);
-  //wire slti	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SLTI);
-  //wire sltiu	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SLTIU);
-  //wire xori	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_XORI);
-  //wire ori	  = (opcode == `OP_ADDI) && (funct3 == `FUNCT3_ORI);
-  //wire andi	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_ANDI);
-  //wire slli	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SL) && (funct7 == `FUNCT7_SLLI);
-  //wire srli	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRLI);
-  //wire srai	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRAI);
-
-  //wire add		= addwith && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_ADD);
-  //wire sub		= addwith && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_SUB);
-  //wire sll		= addwith && (funct3 == `FUNCT3_SLL);
- // wire slt		= addwith && (funct3 == `FUNCT3_SLT);
- // wire sltu	= addwith && (funct3 == `FUNCT3_SLTU);
-  //wire XOR		= addwith && (funct3 == `FUNCT3_XOR);
-  //wire srl		= addwith && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
-  //wire sra		= addwith && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
-  //wire OR		= addwith && (funct3 == `FUNCT3_OR);
- // wire AND		= addwith && (funct3 == `FUNCT3_AND);
+  wire addi	= addwithImm && (funct3 == `FUNCT3_ADDI);
+ 
 
   wire rs1_x0= (rs1 == 5'b00000);
   wire rd_x0 = (rd  == 5'b00000);
@@ -101,7 +80,6 @@ module controller(
   
   assign jalr = JALR;
 
-  //assign j = jal | jalr | btype;
 
   assign bunsigned = bltu | bgeu;
 
@@ -125,12 +103,14 @@ module controller(
 
   assign regwrite = LUI | AUIPC | addi | addwith | itype | JALR | JAL;
 
-
+//这个地方，由于是给好的离散值，所以就用case语句
   always @(*)	begin
-	//aluctrl1 <= `ALU_EMP;
+	
     case(opcode)
-      `OP_LUI:    begin aluctrl1 <= `ALU_EMP;
-			aluctrl <= `ALU_CTRL_LUI;
+      `OP_LUI:   
+      begin 
+          aluctrl1 <= `ALU_EMP;
+			    aluctrl <= `ALU_CTRL_LUI;
 			end
       `OP_AUIPC:  begin aluctrl1 <= `ALU_EMP;
 			aluctrl <= `ALU_CTRL_AUIPC;
