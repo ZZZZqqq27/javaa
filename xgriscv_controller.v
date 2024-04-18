@@ -107,10 +107,10 @@ module controller(
 
   assign pcsrc = 0;
 
-  assign alusrca = LUI ? 2'b01 : (jal||AUIPC ? 2'b10 : 2'b00);
+  assign alusrca = LUI ? 2'b01 : (JAL||AUIPC ? 2'b10 : 2'b00);
   //assign alusrca = 2'b00;
 
-  assign alusrcb = LUI || AUIPC || itype || load || store || jalr||jal;
+  assign alusrcb = LUI || AUIPC || itype || load || store || JALR||JAL;
 //0:reg2 1:imm
 
   assign memwrite = store;
@@ -204,8 +204,8 @@ module controller(
 					aluctrl1 <= 3'b000;
 				end
  endcase
-	//case(jal | jalr | btype) 
-	case(jal | jalr) 
+	
+	case(JAL | JALR) 
 		1'b1:	jtmp <= 1'b1;
 		default: jtmp<=1'b0;// avoid X
 	endcase
