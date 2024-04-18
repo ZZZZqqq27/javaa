@@ -2,7 +2,7 @@
 module mux2to1 
 (
     input  [31:0] d0, d1,
-    input              select,
+    input       select,
     output [31:0] y
 );
 
@@ -20,7 +20,7 @@ module mux3to1
 (
     input  [31:0] d0, d1, d2,
     input  [1:0]       select,
-    output reg [31:0] y
+    output [31:0] y
 );
 
 always @(*) begin
