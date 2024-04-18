@@ -115,8 +115,8 @@ module datapath(
  	floprc #(`ADDR_SIZE)	pr9E(clk, reset, flushE, pcplus4D, pcplus4E);  // pc+4
 
 	// execute stage logic
-	mux3 #(`XLEN)  srcamux(srca1E, 0, pcE, alusrcaE, srcaE);     // alu src a mux
-	mux2 #(`XLEN)  srcbmux(srcb1E, immoutE, alusrcbE, srcbE);			 // alu src b mux
+	mux3to1   srcamux(srca1E, 0, pcE, alusrcaE, srcaE);     // alu src a mux
+	mux2to1  srcbmux(srcb1E, immoutE, alusrcbE, srcbE);			 // alu src b mux
 	wire[`ADDR_SIZE-1:0] PCoutE;
 
 	alu alu(srcaE, srcbE, 5'b0, aluctrlE, aluctrl1E, aluoutE, overflowE, zeroE, ltE, geE);
@@ -172,16 +172,7 @@ module datapath(
   floprc #(`RFIDX_WIDTH)  pr2W(clk, reset, flushW, rdM, rdW);
   floprc #(`ADDR_SIZE)	   pr3W(clk, reset, flushW, pcM, pcW);            // pc
   floprc #(`ADDR_SIZE)	   pr4W(clk, reset, flushW, pcplus4M, pcplus4W);            // pc+4
-	
-	// write-back stage logic
-	//assign wdataW = aluoutW;//mux2
-	//pc+4
-//	assign pcbranchD = aluoutW;
-//j or B & meet the case
-//j -> aluoutW
-//B -> immoutW
-//connect bW, modify alu
-	mux3 #(`XLEN) wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		
+	mux3to1 #(`XLEN) wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		
 	assign waddrW = rdW;
 	//assign pcsrcD = jW;
 	//assign pcsrc = jW | B;
