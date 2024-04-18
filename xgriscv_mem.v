@@ -77,11 +77,11 @@ reg [31:0] rtmp;
 always @(*) begin
     int addr_index = a >> 2;  // Convert byte address to word address index
     case(lwhb)
-        2'b11: rtmp = RAM[addr_index];  // Load a word
+        2'b11: rtmp< = RAM[addr_index];  // Load a word
         2'b10:  // Load a halfword
-            rtmp = lu ? {16'b0, RAM[addr_index][15:0]} : {{16{RAM[addr_index][15]}}, RAM[addr_index][15:0]};
+            rtmp <= lu ? {16'b0, RAM[addr_index][15:0]} : {{16{RAM[addr_index][15]}}, RAM[addr_index][15:0]};
         2'b01:  // Load a byte
-            rtmp = lu ? {24'b0, RAM[addr_index][7:0]} : {{24{RAM[addr_index][7]}}, RAM[addr_index][7:0]};
+            rtmp <= lu ? {24'b0, RAM[addr_index][7:0]} : {{24{RAM[addr_index][7]}}, RAM[addr_index][7:0]};
     endcase
 end
 
@@ -93,11 +93,11 @@ always @(posedge clk) begin
         int byte_offset = (a & 3) * 8;  // Calculate byte offset within the word
         case(swhb)
             2'b11:  // Store a word
-                RAM[addr_index] = wd;
+                RAM[addr_index] <= wd;
             2'b10:  // Store a halfword
-                RAM[addr_index] = (RAM[addr_index] & 32'hFFFF0000) | (wd & 32'h0000FFFF);
+                RAM[addr_index] <= (RAM[addr_index] & 32'hFFFF0000) | (wd & 32'h0000FFFF);
             2'b01:  // Store a byte
-                RAM[addr_index] = (RAM[addr_index] & \~(32'hFF << byte_offset)) | ((wd & 32'hFF) << byte_offset);
+                RAM[addr_index]< = (RAM[addr_index] & \~(32'hFF << byte_offset)) | ((wd & 32'hFF) << byte_offset);
         endcase
     end
 end
