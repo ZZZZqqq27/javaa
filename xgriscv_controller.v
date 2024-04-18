@@ -39,8 +39,8 @@ module controller(
   wire branch= (opcode == `OP_BRANCH);
   wire load	= (opcode == `OP_LOAD); 
   wire store	= (opcode == `OP_STORE);
-  wire addri	= (opcode == `OP_ADDI);
-  wire addrr = (opcode == `OP_ADD);
+  wire addwithImm	= //(opcode == `OP_ADDI);
+  wire addwith = (opcode == `OP_ADD);
 //下面的重复的用上面的代替
   wire beq		= branch && (funct3 == `FUNCT3_BEQ);
   wire bne		= branch && (funct3 == `FUNCT3_BNE);
@@ -69,22 +69,22 @@ module controller(
   wire srli	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRLI);
   wire srai	= (opcode == `OP_ADDI) && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRAI);
 
-  wire add		= addrr && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_ADD);
-  wire sub		= addrr && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_SUB);
-  wire sll		= addrr && (funct3 == `FUNCT3_SLL);
-  wire slt		= addrr && (funct3 == `FUNCT3_SLT);
-  wire sltu	= addrr && (funct3 == `FUNCT3_SLTU);
-  wire XOR		= addrr && (funct3 == `FUNCT3_XOR);
-  wire srl		= addrr && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
-  wire sra		= addrr && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
-  wire OR		= addrr && (funct3 == `FUNCT3_OR);
-  wire AND		= addrr && (funct3 == `FUNCT3_AND);
+  wire add		= addwith && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_ADD);
+  wire sub		= addwith && (funct3 == `FUNCT3_ADD) && (funct7 == `FUNCT7_SUB);
+  wire sll		= addwith && (funct3 == `FUNCT3_SLL);
+  wire slt		= addwith && (funct3 == `FUNCT3_SLT);
+  wire sltu	= addwith && (funct3 == `FUNCT3_SLTU);
+  wire XOR		= addwith && (funct3 == `FUNCT3_XOR);
+  wire srl		= addwith && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRL);
+  wire sra		= addwith && (funct3 == `FUNCT3_SR) && (funct7 == `FUNCT7_SRA);
+  wire OR		= addwith && (funct3 == `FUNCT3_OR);
+  wire AND		= addwith && (funct3 == `FUNCT3_AND);
 
   wire rs1_x0= (rs1 == 5'b00000);
   wire rd_x0 = (rd  == 5'b00000);
   wire nop		= addi && rs1_x0 && rd_x0 && (imm == 12'b0); //addi x0, x0, 0 is nop
 
-  assign itype = load || addri || JALR;
+  assign itype = load || addwithImm || JALR;
 
   wire stype = store;
 
@@ -123,7 +123,7 @@ module controller(
 
   assign memtoreg = load;
 
-  assign regwrite = LUI | AUIPC | addi | addrr | itype | JALR | JAL;
+  assign regwrite = LUI | AUIPC | addi | addwith | itype | JALR | JAL;
 
 
   always @(*)	begin
