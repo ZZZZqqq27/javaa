@@ -17,7 +17,7 @@ module mux3to1
     input  [1:0]       select,
     output [31:0] y
 );
- assign y = s[1] ? d2 : (s[0] ? d1 : d0);
+ assign y = select[1] ? d2 : (select[0] ? d1 : d0);
 
 endmodule
 
