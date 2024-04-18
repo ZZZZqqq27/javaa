@@ -63,24 +63,25 @@ endmodule
 */
 
 module dmem(
-    input           	         clk, we,
-    input  [`XLEN-1:0]        a, wd,
-    input  [`ADDR_SIZE-1:0] 	 pc,
-    input	[1:0]				lwhb,
-    input	[1:0]				swhb,
-    input						lu,
-    output [`XLEN-1:0]        rd
+    input           clk, we,
+    input  [`XLEN-1:0] a, wd,
+    input  [`ADDR_SIZE-1:0] pc,
+    input  [1:0] lwhb,
+    input  [1:0] swhb,
+    input  lu,
+    output [`XLEN-1:0] rd
 );
-reg [31:0] RAM[1023:0]; // 32-bit wide, 1024 entries
+reg [31:0] RAM[1023:0];  // 32-bit wide, 1024 entries
 reg [31:0] rtmp;
 
 always @(*) begin
-    // Adjust address to access the correct 32-bit word
-    int aligned_addr = a >> 2; // Right shift the address to get the word index
+    int addr_index = a >> 2;  // Convert byte address to word address index
     case(lwhb)
-        2'b11: rtmp <= RAM[aligned_addr]; // Load word
-        2'b10: rtmp <= lu ? {16'b0, RAM[aligned_addr][15:0]} : {{16{RAM[aligned_addr][15]}}, RAM[aligned_addr][15:0]}; // Load halfword
-        2'b01: rtmp <= lu ? {24'b0, RAM[aligned_addr][7:0]} : {{24{RAM[aligned_addr][7]}}, RAM[aligned_addr][7:0]}; // Load byte
+        2'b11: rtmp = RAM[addr_index];  // Load a word
+        2'b10:  // Load a halfword
+            rtmp = lu ? {16'b0, RAM[addr_index][15:0]} : {{16{RAM[addr_index][15]}}, RAM[addr_index][15:0]};
+        2'b01:  // Load a byte
+            rtmp = lu ? {24'b0, RAM[addr_index][7:0]} : {{24{RAM[addr_index][7]}}, RAM[addr_index][7:0]};
     endcase
 end
 
@@ -88,22 +89,17 @@ assign rd = rtmp;
 
 always @(posedge clk) begin
     if (we) begin
-        int write_addr = a >> 2; // Right shift the address for word alignment
+        int addr_index = a >> 2;  // Convert byte address to word address index
+        int byte_offset = (a & 3) * 8;  // Calculate byte offset within the word
         case(swhb)
-            2'b11: RAM[write_addr] <= wd; // Store word
-            2'b10: begin // Store halfword
-                // Mask and merge to store only the lower halfword
-                RAM[write_addr] <= (RAM[write_addr] & 32'hFFFF0000) | (wd & 32'h0000FFFF);
-            end
-            2'b01: begin // Store byte
-                // Calculate byte offset within the word
-                int byte_offset = (a & 3) * 8;
-                // Mask and merge to store only the byte
-                RAM[write_addr] <= (RAM[write_addr] & \~(32'hFF << byte_offset)) | ((wd & 32'hFF) << byte_offset);
-            end
+            2'b11:  // Store a word
+                RAM[addr_index] = wd;
+            2'b10:  // Store a halfword
+                RAM[addr_index] = (RAM[addr_index] & 32'hFFFF0000) | (wd & 32'h0000FFFF);
+            2'b01:  // Store a byte
+                RAM[addr_index] = (RAM[addr_index] & \~(32'hFF << byte_offset)) | ((wd & 32'hFF) << byte_offset);
         endcase
     end
 end
 
 endmodule
-
