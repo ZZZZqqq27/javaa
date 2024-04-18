@@ -84,7 +84,7 @@ module controller(
   wire rd_x0 = (rd  == 5'b00000);
   wire nop		= addi && rs1_x0 && rd_x0 && (imm == 12'b0); //addi x0, x0, 0 is nop
 
-  assign itype = load || addri || jalr;
+  assign itype = load || addri || JALR;
 
   wire stype = store;
 
@@ -123,7 +123,7 @@ module controller(
 
   assign memtoreg = load;
 
-  assign regwrite = LUI | AUIPC | addi | addrr | itype | jalr | jal;
+  assign regwrite = LUI | AUIPC | addi | addrr | itype | JALR | JAL;
 
 
   always @(*)	begin
