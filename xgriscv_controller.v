@@ -103,7 +103,7 @@ module controller(
 
   assign regwrite = LUI | AUIPC | addi | addwith | itype | JALR | JAL;
 
-//这个地方，由于是给好的离散值，所以就用case语句
+//这个地方，由于是
   always @(*)	begin
 	
     case(opcode)
