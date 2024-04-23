@@ -12,15 +12,12 @@
 `include "xgriscv_defines.v"
 module alu(
 	input signed	[`XLEN-1:0]	a, b, 
-	input	[4:0]  		shamt, 
+	
 	input	[3:0]   	aluctrl, 
 	input [2:0]			aluctrl1, 
 
-	output reg [`XLEN-1:0]	aluout/*,
-	output       		overflow,//
-	output 			zero,//这个位置要用来判断是否跳转
-	output 			lt,//
-	output 			ge//bge指令使用，*/ 
+	output reg [`XLEN-1:0]	aluout,
+	
 	);
 
 	wire op_unsigned = ~aluctrl[3]&~aluctrl[2]&aluctrl[1]&~aluctrl[0]	//ALU_CTRL_ADDU	4'b0010
@@ -106,6 +103,9 @@ module alu(
 	 endcase
 		endcase
 	    
-	
+	assign overflow = sum[`XLEN-1] ^ sum[`XLEN];
+	assign zero = (aluout == `XLEN'b0);
+	assign lt = aluout[`XLEN-1];
+	assign ge = ~aluout[`XLEN-1];
 endmodule
 
