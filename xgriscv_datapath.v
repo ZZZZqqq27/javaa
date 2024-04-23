@@ -48,7 +48,7 @@ module datapath(
 	wire jW, pcsrc;
 	// next PC logic (operates in fetch and decode)
 	wire [`ADDR_SIZE-1:0]	 pcplus4F, nextpcF, pcbranchD, pcadder2aD, pcadder2bD, pcbranch0D;
-
+	//mux2 #(`ADDR_SIZE)	    pcsrcmux(pcplus4F, pcbranchD, pcsrcD, nextpcF);
 	mux2to1	    pcsrcmux(pcplus4F, pcbranchD, pcsrc, nextpcF);
 	
 	// Fetch stage logic
@@ -117,12 +117,12 @@ module datapath(
  	floprc #(`ADDR_SIZE)	pr9E(clk, reset, flushE, pcplus4D, pcplus4E);  // pc+4
 
 	// execute stage logic
-	mux3to1   srcamux(srca1E, 0, pcE, alusrcaE, srcaE);     // alu src a mux
-	mux2to1  srcbmux(srcb1E, immoutE, alusrcbE, srcbE);			 // alu src b mux
+	mux3to1   srcamux(srca1E, 0, pcE, alusrcaE, srcaE);     
+	mux2to1  srcbmux(srcb1E, immoutE, alusrcbE, srcbE);			
 	wire[`ADDR_SIZE-1:0] PCoutE;
 
-	alu alu(srcaE, srcbE, aluctrlE, aluctrl1E, aluoutE);
-	alu alu1(pcE, immoutE, `ALU_CTRL_ADD, 3'b000, PCoutE);
+	alu alu(srcaE, srcbE, 5'b0, aluctrlE, aluctrl1E, aluoutE, overflowE, zeroE, ltE, geE);
+	alu alu1(pcE, immoutE, 5'b0, `ALU_CTRL_ADD, 3'b000, PCoutE, overflowE, zeroE, ltE, geE);
 		
 	wire B;
 	assign B = bE & aluoutE[0];
