@@ -12,7 +12,7 @@
 `include "xgriscv_defines.v"
 module alu(
 	input signed	[`XLEN-1:0]	a, b, 
-	input	[4:0]  		shamt, 
+	//input	[4:0]  		shamt, 
 	input	[3:0]   	aluctrl, 
 	input [2:0]			aluctrl1, 
 
@@ -106,9 +106,9 @@ module alu(
 	 endcase
 		endcase
 	    
-	assign overflow = sum[`XLEN-1] ^ sum[`XLEN];
-	assign zero = (aluout == `XLEN'b0);
-	assign lt = aluout[`XLEN-1];
-	assign ge = ~aluout[`XLEN-1];
+	//assign overflow = sum[`XLEN-1] ^ sum[`XLEN];
+//	assign zero = (aluout == `XLEN'b0);
+//	assign lt = aluout[`XLEN-1];
+//	assign ge = ~aluout[`XLEN-1];
 endmodule
 
