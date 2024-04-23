@@ -22,7 +22,9 @@ module datapath(
  	output [`ADDR_SIZE-1:0]  pcM,        // to data memory: pc of the write instruction
  	
  	output [`ADDR_SIZE-1:0]  pcW,        // to testbench
-  
+	//&&&&&&&&&&&&&&&&&多output [`ADDR_SIZE-1:0]  pcM,  output [`ADDR_SIZE-1:0]  pcW,   
+	//少input data_ram_weD
+	//少output WEAM
 	
 	// from controller
 	input [4:0]		            immctrlD,
@@ -149,7 +151,10 @@ module datapath(
 	floprc #(`ADDR_SIZE)	    pr3M(clk, reset, flushM, pcE, pcM);            // pc
 	floprc #(`ADDR_SIZE)	    pr4M(clk, reset, flushM, pcplus4E, pcplus4M);            // pc+4
 	
-	// mem stage logic
+	// mem stage logic  
+	//*这里对mem的处理有不一样！！
+
+
 	wire [`XLEN-1:0] dmoutM;
 	dmem dmem(clk, memwriteM, aluoutM, srcb1M, pcM, lwhbM, swhbM, luM, dmoutM);
 
@@ -164,10 +169,10 @@ module datapath(
 	floprc #(`ADDR_SIZE) 	regpcW(clk, reset, flushW, PCoutM, PCoutW);
 	
   // for data
-
+								
   wire[`RFIDX_WIDTH-1:0]	 rdW;
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
-
+//*****************这里有个forward
   floprc #(`XLEN) 	       pr1W(clk, reset, flushW, aluoutM, aluoutW);
   floprc #(`RFIDX_WIDTH)  pr2W(clk, reset, flushW, rdM, rdW);
   floprc #(`ADDR_SIZE)	   pr3W(clk, reset, flushW, pcM, pcW);            // pc
