@@ -12,7 +12,7 @@
 `include "xgriscv_defines.v"
 module alu(
 	input signed	[`XLEN-1:0]	a, b, 
-
+	
 	input	[3:0]   	aluctrl, 
 	input [2:0]			aluctrl1, 
 
@@ -24,22 +24,16 @@ module alu(
 					| aluctrl[3]&aluctrl[2]&~aluctrl[1]&~aluctrl[0] 	//ALU_CTRL_SLTU	4'b1100
 					| aluctrl1[2]&~aluctrl1[1]&aluctrl1[0]//bltu
 					| aluctrl1[2]&aluctrl1[1]&~aluctrl1[0];//bgeu
-	wire sub = aluctrl[3]&~aluctrl[2]&~aluctrl[1]&aluctrl[0]
+
+	wire [`XLEN-1:0] 	b2;
+	wire [`XLEN:0] 		sum; //adder of length XLEN+1
+	wire [`XLEN-1:0]	sll,srl,sra,aa,bb;
+	wire [`XLEN-1:0]	XOR, OR, AND; 
+  	wire sub = aluctrl[3]&~aluctrl[2]&~aluctrl[1]&aluctrl[0]
 				|aluctrl[3]&~aluctrl[2]&aluctrl[1]&~aluctrl[0]
 				|aluctrl[3]&~aluctrl[2]&aluctrl[1]&aluctrl[0]
 				|aluctrl[3]&aluctrl[2]&~aluctrl[1]&~aluctrl[0]
 				|aluctrl1[2]|aluctrl1[1]|aluctrl1[0];
-	wire [`XLEN-1:0] 	REVERSEB=sub ? ~b:b; //补码减法，要对被减数取返之后加1
-	wire [`XLEN:0] 		sum=(op_unsigned & ({1'b0, a} + {1'b0, REVERSEB} + sub))
-				| (~op_unsigned & ({a[`XLEN-1], a} + {REVERSEB[`XLEN-1], REVERSEB} + sub));; //adder of length XLEN+1
-	wire [`XLEN-1:0]	sll=a<<b;
-	wire [`XLEN-1:0]	srl=a>>b;
-	wire [`XLEN-1:0]	sra=a>>>b[9:0] ;
-	
-	wire [`XLEN-1:0]	XOR=a^b; 
-	wire [`XLEN-1:0]	OR=a|b;
-	wire [`XLEN-1:0]	AND=a&b;
-  
 //slt or b
 	/*
 	assign b2 = sub ? ~b:b; 
