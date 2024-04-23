@@ -16,11 +16,11 @@ module alu(
 	input	[3:0]   	aluctrl, 
 	input [2:0]			aluctrl1, 
 
-	output reg [`XLEN-1:0]	aluout,
+	output reg [`XLEN-1:0]	aluout/*,
 	output       		overflow,//
 	output 			zero,//这个位置要用来判断是否跳转
 	output 			lt,//
-	output 			ge//bge指令使用，
+	output 			ge//bge指令使用，*/ 
 	);
 
 	wire op_unsigned = ~aluctrl[3]&~aluctrl[2]&aluctrl[1]&~aluctrl[0]	//ALU_CTRL_ADDU	4'b0010
