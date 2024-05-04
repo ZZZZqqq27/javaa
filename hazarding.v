@@ -1,3 +1,4 @@
+/*
 module hazard (input clk, input memtoreg, input[`RFIDX_WIDTH-1:0] rdE, input[`RFIDX_WIDTH-1:0] rs1D, input[`RFIDX_WIDTH-1:0] rs2D, input writenM, output reg writen);
 	always @ (*)
 	if(memtoreg && (rdE == rs1D || rdE == rs2D) && writenM)
@@ -5,7 +6,7 @@ module hazard (input clk, input memtoreg, input[`RFIDX_WIDTH-1:0] rdE, input[`RF
 	else
 		writen <= 1'b1;
 endmodule
-
+*//*
 module forward (input regwriteM, input[`RFIDX_WIDTH-1:0] rdM, input[`RFIDX_WIDTH-1:0] rs1E, input[`RFIDX_WIDTH-1:0] rs2E,
 				input regwriteW, input[`RFIDX_WIDTH-1:0] rdW, output reg[1:0] forwardA, output reg[1:0] forwardB);
 	always@(*)	begin
@@ -22,4 +23,4 @@ module forward (input regwriteM, input[`RFIDX_WIDTH-1:0] rdM, input[`RFIDX_WIDTH
 				&& rdW == rs2E) forwardB=2'b01;
 		end
 	end
-endmodule
+endmodule*/
