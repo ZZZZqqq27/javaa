@@ -59,10 +59,6 @@ module controller(
   wire addi	= addwithImm && (funct3 == `FUNCT3_ADDI);
  
 
-  //wire rs1_x0= (rs1 == 5'b00000);
-  //wire rd_x0 = (rd  == 5'b00000);
-  //wire nop		= addi && rs1_x0 && rd_x0 && (imm == 12'b0); //addi x0, x0, 0 is nop
-
   assign itype = load || addwithImm || JALR;
 
   wire stype = store;

@@ -36,7 +36,7 @@ module datapath(
 	output [6:0]		           opD,
 	output [2:0]		           funct3D,
 	output [6:0]		           funct7D,
-	output [4:0] 		          rdD, rs1D,
+	output [4:0] 		          rdD, ReadData1Add,
 	output [11:0]  		        immD,
 	output 	       		        zeroD, ltD
 	);
@@ -63,13 +63,13 @@ module datapath(
 	floprc #(`ADDR_SIZE)	  pr2D(clk, reset, flushD, pcF, pcD);           // pc
 	floprc #(`ADDR_SIZE)	  pr3D(clk, reset, flushD, pcplus4F, pcplus4D); // pc+4
 
-	// Decode stage logic
-	wire [`RFIDX_WIDTH-1:0] rs2D;
+	// Decode
+	wire [`RFIDX_WIDTH-1:0] ReadData2Add;
 	assign  opD 	= INSTRUCTION[6:0];
 	assign  rdD     = INSTRUCTION[11:7];
 	assign  funct3D = INSTRUCTION[14:12];
-	assign  rs1D    = INSTRUCTION[19:15];
-	assign  rs2D   	= INSTRUCTION[24:20];
+	assign  ReadData1Add    = INSTRUCTION[19:15];
+	assign  ReadData2Add   	= INSTRUCTION[24:20];
 	assign  funct7D = INSTRUCTION[31:25];
 	assign  immD    = INSTRUCTION[31:20];
 
@@ -80,20 +80,24 @@ module datapath(
 	wire [19:0]		UtypeIm	= INSTRUCTION[31:12];
 	wire [19:0]  JtypeIm	= {INSTRUCTION[31],INSTRUCTION[19:12],INSTRUCTION[20],INSTRUCTION[30:21]};
 	wire [`XLEN-1:0]	ImmResult;
-	wire [`XLEN-1:0]	rdata1D, rdata2D, wdataW;
+	wire [`XLEN-1:0]	rdata1D;
+	wire [`XLEN-1:0]	rdata2D;
+	wire [`XLEN-1:0]	 WriRe;
 	wire [`RFIDX_WIDTH-1:0]	waddrW;
 
 	imm 	im(ItypeIm, StypeIm, BtypeIm, UtypeIm, JtypeIm, immctrlD, ImmResult);
 	//对立即数进行扩展
 	
-	regfile rf(clk, rs1D, rs2D, rdata1D, rdata2D, regwriteW, waddrW, wdataW, pcW);
+	regfile rf(clk, ReadData1Add, ReadData2Add, rdata1D, rdata2D, regwriteW, waddrW, WriRe, pcW);
 	//寄存器读写数据
 	///////////////////////////////////////////////////////////////////////////////////
 	// ID/EX pipeline registers
 
 	// for control signals
 	wire       regwriteE, memwriteE, alusrcbE, memtoregE;
-	wire [1:0] alusrcaE,lwhbE, swhbE;
+	wire [1:0] alusrcaE;
+	wire [1:0] lwhbE;
+	wire [1:0] swhbE;
 	wire [3:0] aluctrlE;
 	wire [2:0] aluctrl1E;
 	wire 	     flushE = pcsrc;
@@ -154,7 +158,7 @@ module datapath(
 	floprc #(`ADDR_SIZE)	    pr3M(clk, reset, flushM, pcE, pcM);            // pc
 	floprc #(`ADDR_SIZE)	    pr4M(clk, reset, flushM, pcplus4E, pcplus4M);            // pc+4
 	
-	// mem stage logic  
+	//MEM阶段
 	//*这里对mem的处理有不一样！！
 
 
@@ -167,8 +171,9 @@ module datapath(
   wire flushW = 0;
 	wire memtoregW, bW;
 		wire[`ADDR_SIZE-1:0] PCoutW;
-  wire[`XLEN-1:0]		   aluoutW, dmoutW;
-	floprc #(`XLEN+4) regW(clk, reset, flushW, {dmoutM, regwriteM, memtoregM, jM, bM}, {dmoutW, regwriteW, memtoregW, jW, bW});
+  wire[`XLEN-1:0]		   AluOutW;//写寄存器的可能是ALU算出来的
+  wire[`XLEN-1:0]		 dOutWr;//写寄存器的可能是DMEM读出来的
+	floprc #(`XLEN+4) regW(clk, reset, flushW, {dmoutM, regwriteM, memtoregM, jM, bM}, {dOutWr, regwriteW, memtoregW, jW, bW});
 	floprc #(`ADDR_SIZE) 	regpcW(clk, reset, flushW, PCoutM, PCoutW);
 	
   // for data
@@ -176,11 +181,11 @@ module datapath(
   wire[`RFIDX_WIDTH-1:0]	 rdW;
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
 //*****************这里有个forward
-  floprc #(`XLEN) 	       pr1W(clk, reset, flushW, aluoutM, aluoutW);//clk,reset,clear,datain,
+  floprc #(`XLEN) 	       pr1W(clk, reset, flushW, aluoutM, AluOutW);//clk,reset,clear,datain,
   floprc #(`RFIDX_WIDTH)  pr2W(clk, reset, flushW, rdM, rdW);
   floprc #(`ADDR_SIZE)	   pr3W(clk, reset, flushW, pcM, pcW);            // pc
   floprc #(`ADDR_SIZE)	   pr4W(clk, reset, flushW, pcplus4M, pcplus4W);            // pc+4
-	mux3to1  wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		//三选一写到register
+	mux3to1  wdatamux(AluOutW, pcplus4W, dOutWr, {memtoregW, jW}, WriRe);		//三选一写到register
 	assign waddrW = rdW;
 	//assign pcsrcD = jW;
 	//assign pcsrc = jW | B;
