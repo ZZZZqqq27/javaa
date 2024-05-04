@@ -18,18 +18,17 @@ module imem(input  [`ADDR_SIZE-1:0]   address,
 
   assign readData = RAM[address[`ADDR_SIZE-1:2]]; // instruction size aligned
 endmodule
-
+/*
 
 module dmem(input           	         clk, we,
             input  [`XLEN-1:0]        a, wd,
-          //  input  [`ADDR_SIZE-1:0] 	 pc,
 			input	[1:0]				lwhb,
 			input	[1:0]				swhb,
 			input						lu,
             output [`XLEN-1:0]        rd);
 
   reg  [7:0] RAM[4095:0];
-	reg [31:0] rtmp;
+	reg [31:0] rtmp;    
 	always @(*) begin
 		case(lwhb)
 		2'b11: rtmp <= {RAM[a+3],RAM[a+2],RAM[a+1],RAM[a]};
@@ -59,6 +58,45 @@ module dmem(input           	         clk, we,
 		endcase
        
   	  end
+endmodule*/
+module dmem (
+    input              clk, we,
+    input  [`XLEN-1:0] a, wd,
+    input              lb, lh, sb, sh, // Four one-bit control signals derived from lwhb and swhb
+    input              lu,
+    output [`XLEN-1:0] rd
+);
+    reg [7:0] RAM[4095:0];
+    reg [31:0] rtmp;
+
+    always @(*) begin
+        if (lb && lh) begin
+            rtmp <= {RAM[a+3], RAM[a+2], RAM[a+1], RAM[a]}; // Word access
+        end else if (lb) begin
+            rtmp <= lu ? {16'b0, RAM[a+1], RAM[a]} : {{16{RAM[a+1][7]}}, RAM[a+1], RAM[a]}; // Half-word access
+        end else if (lh) begin
+            rtmp <= lu ? {24'b0, RAM[a]} : {{24{RAM[a][7]}}, RAM[a]}; // Byte access
+        end else begin
+            rtmp <= 32'b0; // Default value for safety, not necessary if all cases are covered
+        end
+    end
+
+    assign rd = rtmp;
+
+    always @(posedge clk)
+        if (we) begin
+            if (sb && sh) begin
+                RAM[a]   <= wd[7:0];
+                RAM[a+1] <= wd[15:8];
+                RAM[a+2] <= wd[23:16];
+                RAM[a+3] <= wd[31:24]; // Word write
+            end else if (sb) begin
+                RAM[a]   <= wd[7:0];
+                RAM[a+1] <= wd[15:8]; // Half-word write
+            end else if (sh) begin
+                RAM[a]   <= wd[7:0]; // Byte write
+            end
+        end
 endmodule
 
 /*

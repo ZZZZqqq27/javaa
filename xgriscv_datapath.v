@@ -50,7 +50,7 @@ module datapath(
 	
 	// IF阶段
 	pcenr      	 pcreg(clk, reset, 1'b1, nextpcF, pcF);
-//	addr_adder  	pcadder1(pcF, `ADDR_SIZE'b100, pcplus4F);
+
 assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	///////////////////////////////////////////////////////////////////////////////////
 	// IF/ID pipeline registers
@@ -102,9 +102,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	wire [2:0] aluctrl1E;
 	wire 	     flushE = pcsrc;
 	wire luE, jE, bE;
-	floprc #(20) regE(clk, reset, flushE,
-                  {regwriteD, memwriteD, memtoregD, lwhbD, swhbD, lunsignedD, alusrcaD, alusrcbD, aluctrlD, aluctrl1D, jD, bD}, 
-                  {regwriteE, memwriteE, memtoregE, lwhbE, swhbE, luE,		  alusrcaE, alusrcbE, aluctrlE, aluctrl1E, jE, bE});//通过这里写过来的，两位
+	
   
 	// for data
 	
@@ -113,6 +111,10 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	wire [`XLEN-1:0]	 ALUB;//
 	wire [`RFIDX_WIDTH-1:0] rdE;
 	wire [`ADDR_SIZE-1:0] 	pcE, pcplus4E;
+	//之后就在这儿弄一个冲指令的
+	floprc #(20) regE(clk, reset, flushE,
+                  {regwriteD, memwriteD, memtoregD, lwhbD, swhbD, lunsignedD, alusrcaD, alusrcbD, aluctrlD, aluctrl1D, jD, bD}, 
+                  {regwriteE, memwriteE, memtoregE, lwhbE, swhbE, luE,		  alusrcaE, alusrcbE, aluctrlE, aluctrl1E, jE, bE});//通过这里写过来的，两位
 	floprc #(`XLEN) 	pr1E(clk, reset, flushE, rdata1D, ALUA);        	// data from rs1
 	floprc #(`XLEN) 	pr2E(clk, reset, flushE, rdata2D, ALUB);         // data from rs2
 	floprc #(`XLEN) 	pr3E(clk, reset, flushE, ImmResult, ImmOut);        // imm output
@@ -164,7 +166,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 
 
 	wire [`XLEN-1:0] dmoutM;
-	dmem dmem(clk, memwriteM, aluoutM, srcb1M, /*pcM,*/ lwhbM, swhbM, luM, dmoutM);
+	dmem dmem(clk, memwriteM, aluoutM, srcb1M, /*pcM,*/ lwhbM[1],lwhbM[0], swhbM[1],swhbM[0], luM, dmoutM);
 
   ///////////////////////////////////////////////////////////////////////////////////
   // MEM/WB pipeline registers
