@@ -26,7 +26,7 @@ module xgriscv_pipeline(//主模块
   
   imem U_imem(pcF, instr);
 
-  dmem U_dmem(clk, memwrite, addr, writedata, pcM, lwhb, swhb, lu, readdata);
+  dmem U_dmem(clk, memwrite, addr, writedata, /*pcM, */lwhb, swhb, lu, readdata);
   
   xgriscv U_xgriscv(clk, reset, pcF, instr, memwrite, amp, addr, writedata, pcM, pcW, readdata);
   

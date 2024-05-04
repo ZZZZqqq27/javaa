@@ -156,7 +156,7 @@ module datapath(
 
 
 	wire [`XLEN-1:0] dmoutM;
-	dmem dmem(clk, memwriteM, aluoutM, srcb1M, pcM, lwhbM, swhbM, luM, dmoutM);
+	dmem dmem(clk, memwriteM, aluoutM, srcb1M, /*pcM,*/ lwhbM, swhbM, luM, dmoutM);
 
   ///////////////////////////////////////////////////////////////////////////////////
   // MEM/WB pipeline registers

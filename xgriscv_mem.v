@@ -22,7 +22,7 @@ endmodule
 
 module dmem(input           	         clk, we,
             input  [`XLEN-1:0]        a, wd,
-            input  [`ADDR_SIZE-1:0] 	 pc,
+          //  input  [`ADDR_SIZE-1:0] 	 pc,
 			input	[1:0]				lwhb,
 			input	[1:0]				swhb,
 			input						lu,
