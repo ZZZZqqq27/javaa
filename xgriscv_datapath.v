@@ -14,8 +14,6 @@ module datapath(
 	input                    clk, reset,
 	input [`INSTR_SIZE-1:0]  instrF, 	 // from instructon memory
 	output[`ADDR_SIZE-1:0] 	 pcF, 		   // to instruction memory
-
-	//input [`XLEN-1:0]	       readdataM, // from data memory: read data
   output[`XLEN-1:0]        aluoutM, 	 // to data memory: address
   output			                memwriteM,	// to data memory: write enable
  	output [`ADDR_SIZE-1:0]  pcM,        // to data memory: pc of the write instruction
@@ -42,6 +40,8 @@ module datapath(
 	output [11:0]  		        immD,
 	output 	       		        zeroD, ltD
 	);
+
+
 	wire jW, pcsrc;
 	// next PC logic (operates in fetch and decode)
 	wire [`ADDR_SIZE-1:0]	 pcplus4F, nextpcF, pcbranchD, pcadder2aD, pcadder2bD, pcbranch0D;
@@ -114,7 +114,7 @@ module datapath(
  	floprc #(`ADDR_SIZE)	pr9E(clk, reset, flushE, pcplus4D, pcplus4E);  // pc+4
 
 	// execute stage logic
-	mux3to1   srcamux(srca1E, 0, pcE, alusrcaE, srcaE);     
+	mux3to1   srcamux(srca1E, 0, pcE, alusrcaE, srcaE);   //倒数第二个是选择信号，在加了forwarding和 hazarding之后
 	mux2to1  srcbmux(srcb1E, immoutE, alusrcbE, srcbE);			
 	wire[`ADDR_SIZE-1:0] PCoutE;
 
@@ -174,7 +174,7 @@ module datapath(
   floprc #(`RFIDX_WIDTH)  pr2W(clk, reset, flushW, rdM, rdW);
   floprc #(`ADDR_SIZE)	   pr3W(clk, reset, flushW, pcM, pcW);            // pc
   floprc #(`ADDR_SIZE)	   pr4W(clk, reset, flushW, pcplus4M, pcplus4W);            // pc+4
-	mux3to1  wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		
+	mux3to1  wdatamux(aluoutW, pcplus4W, dmoutW, {memtoregW, jW}, wdataW);		//三选一写到register
 	assign waddrW = rdW;
 	//assign pcsrcD = jW;
 	//assign pcsrc = jW | B;

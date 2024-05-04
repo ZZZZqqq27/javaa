@@ -12,7 +12,7 @@
 `include "xgriscv_defines.v"
 //在进行解码后，要产生控制信号
 module controller(
-  input                     clk, reset,
+  //input                     clk, reset,
   input [6:0]	              opcode,
   input [2:0]               funct3,
   input [6:0]               funct7,
@@ -59,9 +59,9 @@ module controller(
   wire addi	= addwithImm && (funct3 == `FUNCT3_ADDI);
  
 
-  wire rs1_x0= (rs1 == 5'b00000);
-  wire rd_x0 = (rd  == 5'b00000);
-  wire nop		= addi && rs1_x0 && rd_x0 && (imm == 12'b0); //addi x0, x0, 0 is nop
+  //wire rs1_x0= (rs1 == 5'b00000);
+  //wire rd_x0 = (rd  == 5'b00000);
+  //wire nop		= addi && rs1_x0 && rd_x0 && (imm == 12'b0); //addi x0, x0, 0 is nop
 
   assign itype = load || addwithImm || JALR;
 
