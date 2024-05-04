@@ -16,7 +16,7 @@ module alu(
 	input	[3:0]   	aluctrl, 
 	input [2:0]			aluctrl1, 
 
-	output reg [`XLEN-1:0]	aluout,
+	output reg [`XLEN-1:0]	aluout
 	//output       		overflow,//
 	//output 			zero,//这个位置要用来判断是否跳转
 	//output 			lt,//
