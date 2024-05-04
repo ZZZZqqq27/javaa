@@ -40,7 +40,8 @@ module datapath(
 	output [11:0]  		        immD,
 	output 	       		        zeroD, ltD
 	);
-
+	wire hazardRESULT=1'b0;
+	wire resetHelp= reset ?1 :hazardRESULT ;
 
 	wire jW, pcsrc;
 	// next PC logic (operates in fetch and decode)
@@ -59,9 +60,9 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	wire flushD = pcsrc; 
 	wire regwriteW;
 
-	floprc #(`INSTR_SIZE) 	pr1D(clk, reset, flushD, instrF, INSTRUCTION);     // instruction,//contro register
-	floprc #(`ADDR_SIZE)	  pr2D(clk, reset, flushD, pcF, pcD);           // pc
-	floprc #(`ADDR_SIZE)	  pr3D(clk, reset, flushD, pcplus4F, pcplus4D); // pc+4
+	floprc #(`INSTR_SIZE) 	pr1D(clk, resetHelp, flushD, instrF, INSTRUCTION);     // instruction,//contro register
+	floprc #(`ADDR_SIZE)	  pr2D(clk, resetHelp, flushD, pcF, pcD);           // pc
+	floprc #(`ADDR_SIZE)	  pr3D(clk, resetHelp, flushD, pcplus4F, pcplus4D); // pc+4
 
 	// ID阶段
 	wire [`RFIDX_WIDTH-1:0] ReadData2Add;
