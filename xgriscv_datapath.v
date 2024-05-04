@@ -50,8 +50,8 @@ module datapath(
 	
 	// IF阶段
 	pcenr      	 pcreg(clk, reset, 1'b1, nextpcF, pcF);
-	addr_adder  	pcadder1(pcF, `ADDR_SIZE'b100, pcplus4F);
-
+//	addr_adder  	pcadder1(pcF, `ADDR_SIZE'b100, pcplus4F);
+assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	///////////////////////////////////////////////////////////////////////////////////
 	// IF/ID pipeline registers
 	wire [`INSTR_SIZE-1:0]	INSTRUCTION;
@@ -107,7 +107,7 @@ module datapath(
                   {regwriteE, memwriteE, memtoregE, lwhbE, swhbE, luE,		  alusrcaE, alusrcbE, aluctrlE, aluctrl1E, jE, bE});//通过这里写过来的，两位
   
 	// for data
-	//wire [`XLEN-1:0]	ALUA, ALUB, ImmOut, srcaE, srcbE, aluoutE;
+	
 	wire [`XLEN-1:0]	 ImmOut;
 	wire [`XLEN-1:0]	ALUA;//先存寄存器读出来的
 	wire [`XLEN-1:0]	 ALUB;//
