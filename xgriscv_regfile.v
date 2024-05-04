@@ -26,7 +26,7 @@ module regfile(
 
  
 
-  always @(posedge clk)
+  always @(negedge clk)
     if (we3 && wa3!=0)
       begin
         rf[wa3] <= wd3;

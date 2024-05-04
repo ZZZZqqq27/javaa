@@ -27,12 +27,7 @@ module pcenr (
 endmodule
 
 // adder for address calculation
-module addr_adder (//这种adder给取消
-	input  [31:0] a, b,
-	output [31:0] y);
 
-	assign  y = a + b;
-endmodule
 
 // flop with reset and clear control
 module floprc #(parameter WIDTH = 8)
