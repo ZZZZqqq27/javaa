@@ -87,7 +87,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 
 	imm 	im(ItypeIm, StypeIm, BtypeIm, UtypeIm, JtypeIm, immctrlD, ImmResult);
 	//对立即数进行扩展
-	assign WrReAdr = rdW;
+	
 	regfile rf(clk, ReadData1Add, ReadData2Add, readRe1, readRe2, regwriteW, WrReAdr, WriReFinal, pcW);
 	//寄存器读写数据
 	///////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
   floprc #(`ADDR_SIZE)	   pr3W(clk, reset, flushW, pcM, pcW);            // pc
   floprc #(`ADDR_SIZE)	   pr4W(clk, reset, flushW, pcplus4M, pcplus4W);            // pc+4
 	mux3to1  wdatamux(AluOutW, pcplus4W, dOutWr, {memtoregW, jW}, WriReFinalFinal);		//三选一写到register,可能是跳转指令后存地址
-	
+	assign WrReAdr = rdW;
 	//assign pcsrcD = jW;
 	//assign pcsrc = jW | B;
 endmodule
