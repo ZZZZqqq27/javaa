@@ -12,15 +12,15 @@
 `include "xgriscv_defines.v"
 module alu(
 	input signed	[`XLEN-1:0]	a, b, 
-	input	[4:0]  		shamt, 
+	
 	input	[3:0]   	aluctrl, 
 	input [2:0]			aluctrl1, 
 
 	output reg [`XLEN-1:0]	aluout,
-	output       		overflow,//
-	output 			zero,//这个位置要用来判断是否跳转
-	output 			lt,//
-	output 			ge//bge指令使用，
+	//output       		overflow,//
+	//output 			zero,//这个位置要用来判断是否跳转
+	//output 			lt,//
+	//output 			ge//bge指令使用，
 	);
 
 	wire op_unsigned = ~aluctrl[3]&~aluctrl[2]&aluctrl[1]&~aluctrl[0]	//ALU_CTRL_ADDU	4'b0010
@@ -31,8 +31,14 @@ module alu(
 
 	wire [`XLEN-1:0] 	b2;
 	wire [`XLEN:0] 		sum; //adder of length XLEN+1
-	wire [`XLEN-1:0]	sll,srl,sra,aa,bb;
-	wire [`XLEN-1:0]	XOR, OR, AND;
+//	wire [`XLEN-1:0]	sll,srl,sra;
+wire [`XLEN-1:0]	sll= a<<b;
+wire [`XLEN-1:0]	srl=a>>b;
+wire [`XLEN-1:0]	sra=a>>>b[9:0];
+	wire [`XLEN-1:0]	XOR=a^b;
+	wire [`XLEN-1:0]	OR=a|b;
+	wire [`XLEN-1:0]	 AND=a&b;
+	//wire [`XLEN-1:0]	XOR, OR, AND;
   	wire sub = aluctrl[3]&~aluctrl[2]&~aluctrl[1]&aluctrl[0]
 				|aluctrl[3]&~aluctrl[2]&aluctrl[1]&~aluctrl[0]
 				|aluctrl[3]&~aluctrl[2]&aluctrl[1]&aluctrl[0]
@@ -44,15 +50,14 @@ module alu(
 	assign sum = (op_unsigned & ({1'b0, a} + {1'b0, b2} + sub))
 				| (~op_unsigned & ({a[`XLEN-1], a} + {b2[`XLEN-1], b2} + sub));
 				// aluctrl[3]=0 if add, or 1 if sub, don't care if other
-	//assign aa = (unsigned) a;
-	//assign bb = (unsigned) b;
-	assign sll = a<<b;
-	assign XOR = a^b;
-	assign OR = a|b;
-	assign AND = a&b;
-	assign srl = a>>b;
-	assign sra = a>>>b[9:0];
-	integer signed i;
+	
+	//assign sll = a<<b;
+	//assign XOR = a^b;
+	//assign OR = a|b;
+	//assign AND = a&b;
+	//assign srl = a>>b;
+	//assign sra = a>>>b[9:0];
+	//integer signed i;
 
 	always@(*)
 		case(aluctrl1[2:0])
@@ -106,9 +111,9 @@ module alu(
 	 endcase
 		endcase
 	    
-	assign overflow = sum[`XLEN-1] ^ sum[`XLEN];
-	assign zero = (aluout == `XLEN'b0);
-	assign lt = aluout[`XLEN-1];
-	assign ge = ~aluout[`XLEN-1];
+//	assign overflow = sum[`XLEN-1] ^ sum[`XLEN];
+//	assign zero = (aluout == `XLEN'b0);
+//	assign lt = aluout[`XLEN-1];
+//	assign ge = ~aluout[`XLEN-1];
 endmodule
 
