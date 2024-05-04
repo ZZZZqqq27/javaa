@@ -1,10 +1,11 @@
 //IF/ID
 //32+32+32
+/*
 module IFIDRegister(input clk,reset,clear,
 input []
 
     )
-    endmodule
+    endmodule*/
 //ID/EX
 //20+32+32+32 +5+32+32
 //第三第四间长度
