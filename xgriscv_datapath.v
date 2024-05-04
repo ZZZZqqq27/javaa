@@ -17,7 +17,7 @@ module datapath(
 
 	input [`XLEN-1:0]	       readdataM, // from data memory: read data
   output[`XLEN-1:0]        aluoutM, 	 // to data memory: address
- 	output[`XLEN-1:0]	       writedataM,// to data memory: write data
+ 	//output[`XLEN-1:0]	       writedataM,// to data memory: write data
   output			                memwriteM,	// to data memory: write enable
  	output [`ADDR_SIZE-1:0]  pcM,        // to data memory: pc of the write instruction
  	

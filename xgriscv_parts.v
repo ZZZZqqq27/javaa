@@ -46,6 +46,7 @@ module floprc #(parameter WIDTH = 8)
     else            q <= d;
 endmodule
 
+
 module imm (  //把立即数扩展
 	input	[11:0]			iimm, 
 	input	[11:0]			simm, 

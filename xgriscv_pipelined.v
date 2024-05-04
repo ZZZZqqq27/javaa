@@ -68,7 +68,7 @@ module xgriscv(input         			        clk, reset,
 
   datapath    dp(clk, reset,
               instr, pcF,
-              readdata, daddr, writedata, memwrite, pcM, pcW,
+              readdata, daddr, /*writedata,*/ memwrite, pcM, pcW,
               immctrlD, itypeD, jalD, jalrD, bunsignedD, pcsrcD, 
               aluctrlD, aluctrl1D, alusrcaD, alusrcbD, 
               memwriteD, lunsignedD,  jD, bD, lwhbD, swhbD,
