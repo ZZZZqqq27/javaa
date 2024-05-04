@@ -15,16 +15,13 @@ module datapath(
 	input [`INSTR_SIZE-1:0]  instrF, 	 // from instructon memory
 	output[`ADDR_SIZE-1:0] 	 pcF, 		   // to instruction memory
 
-	input [`XLEN-1:0]	       readdataM, // from data memory: read data
+	//input [`XLEN-1:0]	       readdataM, // from data memory: read data
   output[`XLEN-1:0]        aluoutM, 	 // to data memory: address
- 	//output[`XLEN-1:0]	       writedataM,// to data memory: write data
   output			                memwriteM,	// to data memory: write enable
  	output [`ADDR_SIZE-1:0]  pcM,        // to data memory: pc of the write instruction
  	
  	output [`ADDR_SIZE-1:0]  pcW,        // to testbench
-	//&&&&&&&&&&&&&&&&&多output [`ADDR_SIZE-1:0]  pcM,  output [`ADDR_SIZE-1:0]  pcW,   
-	//少input data_ram_weD
-	//少output WEAM
+	
 	
 	// from controller
 	input [4:0]		            immctrlD,
