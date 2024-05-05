@@ -27,7 +27,8 @@ module controller(
   output [1:0]              alusrca,
   output                    alusrcb,
   output                    memwrite, lunsigned, j, btype,  // for the MEM stage
-  output [1:0]              lwhb, swhb,
+  //output [1:0]              lwhb, swhb,
+  output  lb, lh, sb, sh,
   output                    memtoreg, regwrite  // for the WB stage
   );
   //输出只用
@@ -89,10 +90,13 @@ module controller(
 
   assign memwrite = store;
 
-  assign swhb = {sw|sh, sw|sb};//w:11, h:10, b:01
+  //assign swhb = {sw|sh, sw|sb};//w:11, h:10, b:01
 
-  assign lwhb = {lw|lh|lhu, lw|lb|lbu};//这个地方
-
+  //assign lwhb = {lw|lh|lhu, lw|lb|lbu};//这个地方
+	assign lb=lw|lh|lhu;
+	assign lh= lw|lb|lbu;
+	assign  sb=sw|sh;
+	assign sh=sw|sb;
   assign lunsigned = lbu | lhu;
 
   assign memtoreg = load;

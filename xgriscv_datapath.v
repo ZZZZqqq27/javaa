@@ -29,7 +29,7 @@ module datapath(
 	input [1:0]		            alusrcaD,
 	input			                 alusrcbD,
 	input			                 memwriteD, lunsignedD, jD, bD,
-	input [1:0]		          	 lwhbD, swhbD,  
+	input 		          	lb,lh,sb,sh
 	input          		        memtoregD, regwriteD,
 	
   	// to controller
@@ -92,13 +92,15 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	regfile rf(clk, ReadData1Add, ReadData2Add, rdata1D, rdata2D, regwriteW, waddrW, WriRe, pcW);
 	//寄存器读写数据
 	///////////////////////////////////////////////////////////////////////////////////
-	// ID/EX pipeline registers
+	          												// ID/EX 寄存器
 
 	// for control signals
 	wire       regwriteE, memwriteE, alusrcbE, memtoregE;
 	wire [1:0] alusrcaE;
-	wire [1:0] lwhbE;
-	wire [1:0] swhbE;
+	wire lbE;
+	wire lhE;
+	wire {sb,sh}E;
+	wire  {sb,sh}E;
 	wire [3:0] aluctrlE;
 	wire [2:0] aluctrl1E;
 	wire 	     flushE = pcsrc;
@@ -114,8 +116,8 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	wire [`ADDR_SIZE-1:0] 	pcE, pcplus4E;
 	//之后就在这儿弄一个冲指令的
 	floprc #(20) regE(clk, reset, flushE,
-                  {regwriteD, memwriteD, memtoregD, lwhbD, swhbD, lunsignedD, alusrcaD, alusrcbD, aluctrlD, aluctrl1D, jD, bD}, 
-                  {regwriteE, memwriteE, memtoregE, lwhbE, swhbE, luE,		  alusrcaE, alusrcbE, aluctrlE, aluctrl1E, jE, bE});//通过这里写过来的，两位
+                  {regwriteD, memwriteD, memtoregD, {lb,lh}, {sb,sh}, lunsignedD, alusrcaD, alusrcbD, aluctrlD, aluctrl1D, jD, bD}, 
+                  {regwriteE, memwriteE, memtoregE, {lbE,lhE}, {sbE,shE}, luE,		  alusrcaE, alusrcbE, aluctrlE, aluctrl1E, jE, bE});//通过这里写过来的，两位
 	floprc #(`XLEN) 	pr1E(clk, reset, flushE, rdata1D, ALUA);        	// data from rs1
 	floprc #(`XLEN) 	pr2E(clk, reset, flushE, rdata2D, ALUB);         // data from rs2
 	floprc #(`XLEN) 	pr3E(clk, reset, flushE, ImmResult, ImmOut);        // imm output
@@ -127,6 +129,8 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	wire [`XLEN-1:0]	srcaE;
 	wire [`XLEN-1:0]	srcbE;
 	wire [`XLEN-1:0]	aluoutE;
+	//wire [1:0] FORWARDAResult;
+	//wire [1:0] FORWARDBResult;
 	mux3to1   srcamux(ALUA, 0, pcE, alusrcaE, srcaE);   //倒数第二个是选择信号，在加了forwarding和 hazarding之后
 	mux2to1  srcbmux(ALUB, ImmOut, alusrcbE, srcbE);			
 	wire[`ADDR_SIZE-1:0] PCoutE;
@@ -144,13 +148,15 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	// for control signals
 	wire 		regwriteM, luM, memtoregM, jM, bM;
 	wire 		flushM = 0;
-	wire [1:0] lwhbM;
-	wire [1:0]  swhbM;
+	wire  lbM,;
+	wire lhM;
+	wire   sbM;
+	wire   shM;
 	wire [`XLEN-1:0] srcb1M;
 	wire[`ADDR_SIZE-1:0] PCoutM;
 	floprc #(`XLEN+10) 	regM(clk, reset, flushM,
-                  	{ALUB, regwriteE, memwriteE, memtoregE, lwhbE, luE, swhbE, jE, bE},
-                  	{srcb1M, regwriteM, memwriteM, memtoregM, lwhbM, luM, swhbM, jM, bM});
+                  	{ALUB, regwriteE, memwriteE, memtoregE, {lbE,lhE}, luE, {sbE,shE}, jE, bE},
+                  	{srcb1M, regwriteM, memwriteM, memtoregM, {lbM,lhM}, luM, {sbM,shM}, jM, bM});
 	floprc #(`ADDR_SIZE) 	regpcM(clk, reset, flushM, PCoutE, PCoutM);
 
 
@@ -167,7 +173,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 
 
 	wire [`XLEN-1:0] dmoutM;
-	dmem dmem(clk, memwriteM, aluoutM, srcb1M, /*pcM,*/ lwhbM[1],lwhbM[0], swhbM[1],swhbM[0], luM, dmoutM);
+	dmem dmem(clk, memwriteM, aluoutM, srcb1M, /*pcM,*/ lbM,lhM,sbM,shM, luM, dmoutM);
 
   ///////////////////////////////////////////////////////////////////////////////////
   // MEM/WB pipeline registers

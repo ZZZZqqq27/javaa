@@ -50,14 +50,18 @@ module xgriscv(input         			        clk, reset,
   wire [1:0]  alusrcaD;
   wire        alusrcbD, jD, bD;
   wire        memwriteD, lunsignedD;
-  wire [1:0]  swhbD, lwhbD;
+  wire  lb;
+    wire  lh;
+      wire   sb;
+        wire   sh;
+
   wire        memtoregD, regwriteD;
 
-  controller  c(opD, funct3D, funct7D, rdD, rs1D, immD, zeroD, ltD,
+  controller  CONTROLLER(opD, funct3D, funct7D, rdD, rs1D, immD, zeroD, ltD,
               immctrlD, itypeD, jalD, jalrD, bunsignedD, pcsrcD, 
               aluctrlD, aluctrl1D, alusrcaD, alusrcbD, 
-              memwriteD, lunsignedD, jD, bD, lwhbD, swhbD,
-              memtoregD, regwriteD);
+              memwriteD, lunsignedD, jD, bD, lb,lh, sb,sh,
+              memtoregD, regwriteD); 
 
 
   datapath    dp(clk, reset,
