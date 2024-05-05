@@ -35,7 +35,7 @@ module controller(
 //先判断是什么type，
   wire LUI		= (opcode == `OP_LUI);
   wire AUIPC	= (opcode == `OP_AUIPC);
-  wire JAL		= (opcode == `OP_JAL);//这里define里分别给出了，
+  wire JAL		= (opcode == `OP_JAL);
   wire JALR	= (opcode == `OP_JALR);
   wire branch= (opcode == `OP_BRANCH);
   wire load	= (opcode == `OP_LOAD); 

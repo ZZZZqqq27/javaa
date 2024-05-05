@@ -53,7 +53,7 @@ module datapath(
 	pcenr      	 pcreg(clk, reset, 1'b1, nextpcF, pcF);
 
 assign pcplus4F = pcF + `ADDR_SIZE'b100;
-	///////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// IF/ID pipeline registers
 	wire [`INSTR_SIZE-1:0]	INSTRUCTION;
 	wire [`ADDR_SIZE-1:0]	pcD, pcplus4D;
@@ -91,7 +91,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	
 	regfile rf(clk, ReadData1Add, ReadData2Add, rdata1D, rdata2D, regwriteW, waddrW, WriRe, pcW);
 	//寄存器读写数据
-	///////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	          												// ID/EX 寄存器
 
 	// for control signals
@@ -99,8 +99,9 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	wire [1:0] alusrcaE;
 	wire lbE;
 	wire lhE;
-	wire {sb,sh}E;
-	wire  {sb,sh}E;
+	wire sbE;
+	wire shE;
+	//wire  {sb,sh}E;
 	wire [3:0] aluctrlE;
 	wire [2:0] aluctrl1E;
 	wire 	     flushE = pcsrc;
