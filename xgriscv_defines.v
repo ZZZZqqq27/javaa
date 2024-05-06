@@ -1,13 +1,3 @@
-//=====================================================================
-//
-// Designer   : Yili Gong
-//
-// Description:
-// As part of the project of Computer Organization Experiments, Wuhan University
-// In spring 2021
-// Macro definitions
-//
-// ====================================================================
 
 `define DEBUG
 
@@ -15,7 +5,6 @@
 
 `define ADDR_SIZE			32 // the width of an address
 `define INSTR_SIZE  32 // the length of an instruction
-`define INSTR_WIDTH 5  // the bit width of an instruction
 
 `define XLEN				    32 // the data width of a register
 `define XLEN_WIDTH		5
