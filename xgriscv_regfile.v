@@ -8,6 +8,7 @@
 // The regfile module implements the core's general purpose registers file.
 //
 // ====================================================================
+
 `include "xgriscv_defines.v"
 
 module regfile(
@@ -24,7 +25,10 @@ module regfile(
 
   reg [`XLEN-1:0] rf[`RFREG_NUM-1:0];
 
- 
+  // three ported register file
+  // read two ports combinationally
+  // write third port on falling edge of clock
+  // register 0 hardwired to 0
 
   always @(negedge clk)
     if (we3 && wa3!=0)

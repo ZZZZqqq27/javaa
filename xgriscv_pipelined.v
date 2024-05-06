@@ -10,7 +10,7 @@
 // ====================================================================
 
 `include "xgriscv_defines.v"
-module xgriscv_pipeline(//主模块
+module xgriscv_pipeline(
   input                   clk, reset,
   output[`ADDR_SIZE-1:0]  pcW);
   
@@ -18,10 +18,16 @@ module xgriscv_pipeline(//主模块
   wire [31:0]    pcF, pcM;
   wire           memwrite;
   wire [3:0]     amp;
-  wire [31:0]    addr, writedata, readdata;//从内存中读出来的数据
+  wire [31:0]    addr, writedata, readdata;
+  wire	[1:0]				lwhb;
+  wire	[1:0]				swhb;
+	wire				lu;
+   
   
   imem U_imem(pcF, instr);
 
+  dmem U_dmem(clk, memwrite, addr, writedata, pcM, lwhb, swhb, lu, readdata);
+  
   xgriscv U_xgriscv(clk, reset, pcF, instr, memwrite, amp, addr, writedata, pcM, pcW, readdata);
   
 endmodule
@@ -29,7 +35,7 @@ endmodule
 // xgriscv: a pipelined riscv processor
 module xgriscv(input         			        clk, reset,
                output [31:0] 			        pcF,
-               input  [`INSTR_SIZE-1:0] instr,//把instruction送进来
+               input  [`INSTR_SIZE-1:0] instr,
                output					              memwrite,
                output [3:0]  			        amp,
                output [`ADDR_SIZE-1:0] 	daddr, 
@@ -50,23 +56,19 @@ module xgriscv(input         			        clk, reset,
   wire [1:0]  alusrcaD;
   wire        alusrcbD, jD, bD;
   wire        memwriteD, lunsignedD;
-  wire  lb;
-    wire  lh;
-      wire   sb;
-        wire   sh;
-
+  wire [1:0]  swhbD, lwhbD;
   wire        memtoregD, regwriteD;
 
-  controller  CONTROLLER(opD, funct3D, funct7D, rdD, rs1D, immD, zeroD, ltD,
+  controller  c(clk, reset, opD, funct3D, funct7D, rdD, rs1D, immD, zeroD, ltD,
               immctrlD, itypeD, jalD, jalrD, bunsignedD, pcsrcD, 
               aluctrlD, aluctrl1D, alusrcaD, alusrcbD, 
-              memwriteD, lunsignedD, jD, bD, lb,lh, sb,sh,
-              memtoregD, regwriteD); 
+              memwriteD, lunsignedD, jD, bD, lwhbD, swhbD,
+              memtoregD, regwriteD);
 
 
   datapath    dp(clk, reset,
               instr, pcF,
-             daddr,  memwrite, pcM, pcW,
+              readdata, daddr, writedata, memwrite, pcM, pcW,
               immctrlD, itypeD, jalD, jalrD, bunsignedD, pcsrcD, 
               aluctrlD, aluctrl1D, alusrcaD, alusrcbD, 
               memwriteD, lunsignedD,  jD, bD, lwhbD, swhbD,
