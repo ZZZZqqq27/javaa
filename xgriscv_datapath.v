@@ -137,7 +137,7 @@ wire[4:0]ReadData2AddE;
 
 
 
-
+wire 	regwriteM;
 
 	// EX阶段
 	wire [`XLEN-1:0]	srcaE;
@@ -149,11 +149,12 @@ wire[4:0]ReadData2AddE;
 	mux2to1  srcbmux(ALUB, ImmOut, alusrcbE, srcbE);			
 	wire[`ADDR_SIZE-1:0] PCoutE;
 	//3 to1 的  控制信号 10 选 第三个输入信号， 控制信号 00选 第一个输入信号，01第二个	
-	
+	 wire[`RFIDX_WIDTH-1:0]	 rdW;
 	wire  [`XLEN-1:0] srcaEAddForward;
 	wire [`XLEN-1:0]  srcbEAddForward;
 	wire [1:0] ForwardResultA;
 	wire [1:0] ForwardResultB;
+		wire [`RFIDX_WIDTH-1:0]	 rdM;
 	forward UseForward(STYPEE,regwriteM,rdM,ReadData1AddE,ReadData2AddE,regwriteW,rdW, ForwardResultA, ForwardResultB);
 	mux3to1 sraForwardMux( srcaE	, WriRe,aluoutM  ,ForwardResultA,srcaEAddForward) ;	//这里要看好顺序
 	mux3to1 srbForwardMux(	srcbE,WriRe ,aluoutM , ForwardResultB,srcbEAddForward);
@@ -173,7 +174,7 @@ wire[4:0]ReadData2AddE;
 		///////////////////////////////////////////////////////////////////////////////////
 	// EX/MEM pipeline registers
 	// for control signals
-	wire 		regwriteM, luM, memtoregM, jM, bM;
+	wire luM, memtoregM, jM, bM;
 	wire 		flushM = 0;
 	wire  lbM;
 	wire lhM;
@@ -189,7 +190,7 @@ wire[4:0]ReadData2AddE;
 
 	// for data
 	wire [`ADDR_SIZE-1:0]	pcplus4M;
- 	wire [`RFIDX_WIDTH-1:0]	 rdM;
+ 
 	floprc #(`XLEN) 	        pr1M(clk, reset, flushM, aluoutE, aluoutM);
 	floprc #(`RFIDX_WIDTH) 	 pr2M(clk, reset, flushM, rdE, rdM);
 	floprc #(`ADDR_SIZE)	    pr3M(clk, reset, flushM, pcE, pcM);            // pc
@@ -227,7 +228,7 @@ floprc #(`ADDR_SIZE) 	regpcW(clk, reset, flushW, PCoutM, PCoutW);
 	
   // for data
 								
-  wire[`RFIDX_WIDTH-1:0]	 rdW;
+ 
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
 
   floprc #(`XLEN) 	       pr1W(clk, reset, flushW, aluoutM, AluOutW);//clk,reset,clear,datain,
