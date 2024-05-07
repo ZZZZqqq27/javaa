@@ -1,8 +1,7 @@
 `include "xgriscv_defines.v"
 
-module hazard (input STYPE,input clk, input memtoreg, input[`RFIDX_WIDTH-1:0] rdE, input[`RFIDX_WIDTH-1:0] rs1D, input[`RFIDX_WIDTH-1:0] rs2D, input writenM, output reg FLUSHCONTROLL,output reg NOCHANGEIFIDREG,output reg STALLPC);
+module hazard (input clk, input memtoreg, input[`RFIDX_WIDTH-1:0] rdE, input[`RFIDX_WIDTH-1:0] rs1D, input[`RFIDX_WIDTH-1:0] rs2D, input writenM, output reg FLUSHCONTROLL,output reg NOCHANGEIFIDREG,output reg STALLPC);
 	always @ (*)begin
-		if(!STYPE)begin
 	if(memtoreg && (rdE == rs1D || rdE == rs2D) && writenM)begin
 		NOCHANGEIFIDREG <= 1'b1;
 		FLUSHCONTROLL<=1'b1;
@@ -10,9 +9,8 @@ module hazard (input STYPE,input clk, input memtoreg, input[`RFIDX_WIDTH-1:0] rd
 	end
 	else begin
 			NOCHANGEIFIDREG <= 1'b0;
-		FLUSHCONTROLL<=1'b0;
+		FLUSHCONTROLL<=1'b1;
 		STALLPC<=1'b1;
-	end
 	end
 	end
 endmodule

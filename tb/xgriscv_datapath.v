@@ -37,9 +37,16 @@ module datapath(
 	output [2:0]		           funct3D,
 	output [6:0]		           funct7D
 	);
+	wire 		regwriteM, luM, memtoregM, jM, bM;
+	wire[4:0] ReadData1AddE;
+ 	wire [`RFIDX_WIDTH-1:0]	 rdM;
+wire[4:0]ReadData2AddE;
+	wire  NOCHANGEIFIDREG;
+wire STALLFlUSH;
+wire PCNOTCHANGE;
 	wire hazardRESULT=1'b0;
 	wire resetHelp= reset ?1 :hazardRESULT ;
-
+ wire[`RFIDX_WIDTH-1:0]	 rdW;
 	wire jW, pcsrc;
 	// next PC logic (operates in fetch and decode)
 	wire [`ADDR_SIZE-1:0]	 pcplus4F, nextpcF, pcbranchD, pcadder2aD, pcadder2bD, pcbranch0D;
@@ -64,10 +71,8 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 
 
 //stall 
-wire  NOCHANGEIFIDREG;
-wire STALLFlUSH;
-wire PCNOTCHANGE; 
-hazard USEHAZARD(STYPE,clk,memtoregE,rdE,ReadData1Add,ReadData2Add, regwriteE,STALLFlUSH, NOCHANGEIFIDREG,PCNOTCHANGE);
+ 
+hazard USEHAZARD(clk,memtoregE,rdE,ReadData1Add,ReadData2Add, regwriteE,STALLFlUSH, NOCHANGEIFIDREG,PCNOTCHANGE);
 
 	// ID阶段
 	wire [`RFIDX_WIDTH-1:0] ReadData2Add;
@@ -100,9 +105,7 @@ wire[4:0]  rdD     = INSTRUCTION[11:7];
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 // ID/EX 
 //for forwarding
-wire[4:0] ReadData1AddE;
 
-wire[4:0]ReadData2AddE;
 
  
 
@@ -182,7 +185,7 @@ wire[4:0]ReadData2AddE;
 		///////////////////////////////////////////////////////////////////////////////////
 	// EX/MEM pipeline registers
 	// for control signals
-	wire 		regwriteM, luM, memtoregM, jM, bM;
+	
 	wire 		flushM = 0;
 	wire  lbM;
 	wire lhM;
@@ -198,7 +201,7 @@ wire[4:0]ReadData2AddE;
 
 	// for data
 	wire [`ADDR_SIZE-1:0]	pcplus4M;
- 	wire [`RFIDX_WIDTH-1:0]	 rdM;
+
 	floprc #(`XLEN) 	        pr1M(clk, reset, flushM, aluoutE, aluoutM);
 	floprc #(`RFIDX_WIDTH) 	 pr2M(clk, reset, flushM, rdE, rdM);
 	floprc #(`ADDR_SIZE)	    pr3M(clk, reset, flushM, pcE, pcM);            // pc
@@ -236,7 +239,7 @@ floprc #(`ADDR_SIZE) 	regpcW(clk, reset, flushW, PCoutM, PCoutW);
 	
   // for data
 								
-  wire[`RFIDX_WIDTH-1:0]	 rdW;
+ 
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
 
   floprc #(`XLEN) 	       pr1W(clk, reset, flushW, aluoutM, AluOutW);//clk,reset,clear,datain,
