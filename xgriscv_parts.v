@@ -41,6 +41,20 @@ module floprc #(parameter WIDTH = 8)
     else            q <= d;
 endmodule
 
+module floprcWITHNOCHANGE #(parameter WIDTH = 8)
+              (input                  clk, reset, clear,nochange,
+               input      [WIDTH-1:0] d, 
+               output reg [WIDTH-1:0] q);
+
+  always @(posedge clk, posedge reset)
+    if (reset)      q <= 0;
+	else if(nochange) begin
+	end
+
+    else if (clear) q <= 0;
+    else            q <= d;
+endmodule
+
 
 module imm (  //把立即数扩展
 	input	[11:0]			iimm, 
