@@ -71,6 +71,7 @@ module datapath(
 	//wire  {sb,sh}E;
 	wire [3:0] aluctrlE;
 	wire [2:0] aluctrl1E;
+	wire STALLFlUSH;
 	wire 	     flushE = pcsrc|STALLFlUSH;
 	wire luE, jE, bE;
 		wire [`XLEN-1:0]	srcaE;
@@ -95,7 +96,7 @@ module datapath(
 	wire hazardRESULT=1'b0;
 	wire resetHelp= reset ?1 :hazardRESULT ;
 wire  NOCHANGEIFIDREG;
-wire STALLFlUSH;
+
 wire PCNOTCHANGE; 
 wire B;
   wire[`RFIDX_WIDTH-1:0]	 rdW;
