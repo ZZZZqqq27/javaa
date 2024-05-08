@@ -122,7 +122,7 @@ wire B;
 	wire [`ADDR_SIZE-1:0]	pcD, pcplus4D;
 	wire flushD = pcsrc; 
 	wire regwriteW;
-	wire STALLFlUSH;
+	//wire STALLFlUSH;
 	mux2to1	    pcsrcmux(pcplus4F, pcbranchD, pcsrc, nextpcF);
 	
 	//wire pcChangeEn; 
