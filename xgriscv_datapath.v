@@ -37,10 +37,69 @@ module datapath(
 	output [2:0]		           funct3D,
 	output [6:0]		           funct7D
 	);
+	wire[4:0] ReadData1AddE;
+
+wire[4:0]ReadData2AddE;
+
+	wire MEMWBDATASELECT;
+	wire [`XLEN-1:0] dmoutM;
+ wire 		regwriteM, luM, memtoregM, jM, bM;
+	wire 		flushM = 0;
+	wire  lbM;
+	wire lhM;
+	wire   sbM;
+	wire   shM;
+	wire [`XLEN-1:0] srcb1M;
+	wire[`ADDR_SIZE-1:0] PCoutM;
+  wire flushW = 0;//fulsh在后面调整
+  wire memtoregW, bW;
+  wire[`ADDR_SIZE-1:0] PCoutW;
+  wire[`XLEN-1:0]		   AluOutW;//写寄存器的可能是ALU算出来的
+  wire[`XLEN-1:0]		 dOutWr;//写寄存器的可能是DMEM读出来的
+	// for control signals
+	wire       regwriteE, memwriteE, alusrcbE, memtoregE;
+	wire [1:0] alusrcaE;
+	wire lbE;
+	wire lhE;
+	wire sbE;
+	wire shE;
+	//wire  {sb,sh}E;
+	wire [3:0] aluctrlE;
+	wire [2:0] aluctrl1E;
+	wire 	     flushE = pcsrc|STALLFlUSH;
+	wire luE, jE, bE;
+		wire [`XLEN-1:0]	srcaE;
+	wire [`XLEN-1:0]	srcbE;
+	wire [`XLEN-1:0]	aluoutE;
+	wire[`ADDR_SIZE-1:0] PCoutE;
+	//3 to1 的  控制信号 10 选 第三个输入信号， 控制信号 00选 第一个输入信号，01第二个	
+	
+	wire  [`XLEN-1:0] srcaEAddForward;
+	wire [`XLEN-1:0]  srcbEAddForward;
+	wire [1:0] ForwardResultA;
+	wire [1:0] ForwardResultB;
+		wire [`RFIDX_WIDTH-1:0] rs2M;
+	// for data
+	wire STYPEE;
+	wire [`XLEN-1:0]	 ImmOut;
+	wire [`XLEN-1:0]	ALUA;//先存寄存器读出来的
+	wire [`XLEN-1:0]	 ALUB;//
+	wire [`RFIDX_WIDTH-1:0] rdE;
+	wire [`ADDR_SIZE-1:0] 	pcE, pcplus4E;
+	//之后就在这儿弄一个冲指令的
 	wire hazardRESULT=1'b0;
 	wire resetHelp= reset ?1 :hazardRESULT ;
-
+wire  NOCHANGEIFIDREG;
+wire STALLFlUSH;
+wire PCNOTCHANGE; 
+wire B;
+  wire[`RFIDX_WIDTH-1:0]	 rdW;
+  	
+	wire [`XLEN-1:0]REALINDMEM;
+	wire [`ADDR_SIZE-1:0]	pcplus4W;
 	wire jW, pcsrc;
+		wire [`ADDR_SIZE-1:0]	pcplus4M;
+ 	wire [`RFIDX_WIDTH-1:0]	 rdM;
 	// next PC logic (operates in fetch and decode)
 	wire [`ADDR_SIZE-1:0]	 pcplus4F, nextpcF, pcbranchD, pcadder2aD, pcadder2bD, pcbranch0D;
 	
@@ -64,9 +123,7 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 
 
 //stall 
-wire  NOCHANGEIFIDREG;
-wire STALLFlUSH;
-wire PCNOTCHANGE; 
+
 hazard USEHAZARD(STYPE,clk,memtoregE,rdE,ReadData1Add,ReadData2Add, regwriteE,STALLFlUSH, NOCHANGEIFIDREG,PCNOTCHANGE);
 
 	// ID阶段
@@ -100,34 +157,7 @@ wire[4:0]  rdD     = INSTRUCTION[11:7];
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 // ID/EX 
 //for forwarding
-wire[4:0] ReadData1AddE;
 
-wire[4:0]ReadData2AddE;
-
- 
-
-	// for control signals
-	wire       regwriteE, memwriteE, alusrcbE, memtoregE;
-	wire [1:0] alusrcaE;
-	wire lbE;
-	wire lhE;
-	wire sbE;
-	wire shE;
-	//wire  {sb,sh}E;
-	wire [3:0] aluctrlE;
-	wire [2:0] aluctrl1E;
-	wire 	     flushE = pcsrc|STALLFlUSH;
-	wire luE, jE, bE;
-	
-	
-	// for data
-	wire STYPEE;
-	wire [`XLEN-1:0]	 ImmOut;
-	wire [`XLEN-1:0]	ALUA;//先存寄存器读出来的
-	wire [`XLEN-1:0]	 ALUB;//
-	wire [`RFIDX_WIDTH-1:0] rdE;
-	wire [`ADDR_SIZE-1:0] 	pcE, pcplus4E;
-	//之后就在这儿弄一个冲指令的
 	
 	floprc #(1) 	prSTYPE(clk, reset, flushE, STYPE, STYPEE);        	
 	floprc #(20) regE(clk, reset, flushE,
@@ -149,20 +179,12 @@ wire[4:0]ReadData2AddE;
 
 
 	// EX阶段
-	wire [`XLEN-1:0]	srcaE;
-	wire [`XLEN-1:0]	srcbE;
-	wire [`XLEN-1:0]	aluoutE;
+
 	//wire [1:0] FORWARDAResult;
 	//wire [1:0] FORWARDBResult;
 	mux3to1   srcamux(ALUA, 0, pcE, alusrcaE, srcaE);   //倒数第二个是选择信号，在加了forwarding和 hazarding之后
 	mux2to1  srcbmux(ALUB, ImmOut, alusrcbE, srcbE);			
-	wire[`ADDR_SIZE-1:0] PCoutE;
-	//3 to1 的  控制信号 10 选 第三个输入信号， 控制信号 00选 第一个输入信号，01第二个	
 	
-	wire  [`XLEN-1:0] srcaEAddForward;
-	wire [`XLEN-1:0]  srcbEAddForward;
-	wire [1:0] ForwardResultA;
-	wire [1:0] ForwardResultB;
 	forward UseForward(STYPEE,regwriteM,rdM,ReadData1AddE,ReadData2AddE,regwriteW,rdW, ForwardResultA, ForwardResultB);
 	mux3to1 sraForwardMux( srcaE	, WriRe,aluoutM  ,ForwardResultA,srcaEAddForward) ;	//这里要看好顺序
 	mux3to1 srbForwardMux(	srcbE,WriRe ,aluoutM , ForwardResultB,srcbEAddForward);
@@ -174,7 +196,7 @@ wire[4:0]ReadData2AddE;
 	//alu alu(srcaE, srcbE,  aluctrlE, aluctrl1E, aluoutE);
 	
 		assign  PCoutE = pcE+ImmOut;	//如果branch，下一个pc
-	wire B;
+	
 	assign B = bE & aluoutE[0];
 	mux2to1 brmux(aluoutE, PCoutE, B, pcbranchD);			 // pcsrc mux	
 
@@ -182,14 +204,7 @@ wire[4:0]ReadData2AddE;
 		///////////////////////////////////////////////////////////////////////////////////
 	// EX/MEM pipeline registers
 	// for control signals
-	wire 		regwriteM, luM, memtoregM, jM, bM;
-	wire 		flushM = 0;
-	wire  lbM;
-	wire lhM;
-	wire   sbM;
-	wire   shM;
-	wire [`XLEN-1:0] srcb1M;
-	wire[`ADDR_SIZE-1:0] PCoutM;
+	
 	floprc #(`XLEN+10) 	regM(clk, reset, flushM,
                   	{ALUB, regwriteE, memwriteE, memtoregE, {lbE,lhE}, luE, {sbE,shE}, jE, bE},
                   	{srcb1M, regwriteM, memwriteM, memtoregM, {lbM,lhM}, luM, {sbM,shM}, jM, bM});
@@ -197,47 +212,38 @@ wire[4:0]ReadData2AddE;
 
 
 	// for data
-	wire [`ADDR_SIZE-1:0]	pcplus4M;
- 	wire [`RFIDX_WIDTH-1:0]	 rdM;
+
 	floprc #(`XLEN) 	        pr1M(clk, reset, flushM, aluoutE, aluoutM);
 	floprc #(`RFIDX_WIDTH) 	 pr2M(clk, reset, flushM, rdE, rdM);
 	floprc #(`ADDR_SIZE)	    pr3M(clk, reset, flushM, pcE, pcM);            // pc
 	floprc #(`ADDR_SIZE)	    pr4M(clk, reset, flushM, pcplus4E, pcplus4M);            // pc+4
 	
 	
-	wire [`RFIDX_WIDTH-1:0] rs2M;
+
 						//  为了WB-MEM写的传rs2
 	
 	floprc #(`RFIDX_WIDTH)	    pr5M(clk, reset, flushM, ReadData2AddE,rs2M); 
 	//MEM阶段
 	//这里对mem的处理有不一样！！
 
-	wire MEMWBDATASELECT;
-	wire [`XLEN-1:0] dmoutM;
 	
 	WBMEM wbmem(memwriteM,rs2M,rdW,MEMWBDATASELECT);
 	
 	//应该是没报错
-	
-	wire [`XLEN-1:0]REALINDMEM;
+
 	mux2to1  WBMEMMUX(srcb1M,WriRe,MEMWBDATASELECT,REALINDMEM);
 	//dmem dmem(clk, memwriteM, aluoutM, srcb1M, lbM,lhM,sbM,shM, luM, dmoutM);
 dmem dmem(clk, memwriteM, aluoutM,REALINDMEM/*, srcb1M*/, lbM,lhM,sbM,shM, luM, dmoutM);
   ///////////////////////////////////////////////////////////////////////////////////
   // MEM/WB pipeline registers
   // for control signals
-  wire flushW = 0;//fulsh在后面调整
-  wire memtoregW, bW;
-  wire[`ADDR_SIZE-1:0] PCoutW;
-  wire[`XLEN-1:0]		   AluOutW;//写寄存器的可能是ALU算出来的
-  wire[`XLEN-1:0]		 dOutWr;//写寄存器的可能是DMEM读出来的
+
 floprc #(`XLEN+4) regW(clk, reset, flushW, {dmoutM, regwriteM, memtoregM, jM, bM}, {dOutWr, regwriteW, memtoregW, jW, bW});
 floprc #(`ADDR_SIZE) 	regpcW(clk, reset, flushW, PCoutM, PCoutW);
 	
   // for data
 								
-  wire[`RFIDX_WIDTH-1:0]	 rdW;
-	wire [`ADDR_SIZE-1:0]	pcplus4W;
+
 
   floprc #(`XLEN) 	       pr1W(clk, reset, flushW, aluoutM, AluOutW);//clk,reset,clear,datain,
   floprc #(`RFIDX_WIDTH)  pr2W(clk, reset, flushW, rdM, rdW);
