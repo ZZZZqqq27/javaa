@@ -37,9 +37,9 @@ module datapath(
 	output [2:0]		           funct3D,
 	output [6:0]		           funct7D
 	);
-	wire[4:0] ReadData1AddE;
+	//wire[4:0] ReadData1AddE;
 
-wire[4:0]ReadData2AddE;
+//wire[4:0]ReadData2AddE;
 
 	wire MEMWBDATASELECT;
 	wire [`XLEN-1:0] dmoutM;
@@ -56,6 +56,10 @@ wire[4:0]ReadData2AddE;
   wire[`ADDR_SIZE-1:0] PCoutW;
   wire[`XLEN-1:0]		   AluOutW;//写寄存器的可能是ALU算出来的
   wire[`XLEN-1:0]		 dOutWr;//写寄存器的可能是DMEM读出来的
+  wire[4:0]  rdD     = INSTRUCTION[11:7];
+
+	wire[4:0]  ReadData1Add   = INSTRUCTION[19:15];
+	wire[11:0]  immD    = INSTRUCTION[31:20];
 	// for control signals
 	wire       regwriteE, memwriteE, alusrcbE, memtoregE;
 	wire [1:0] alusrcaE;
@@ -94,7 +98,7 @@ wire STALLFlUSH;
 wire PCNOTCHANGE; 
 wire B;
   wire[`RFIDX_WIDTH-1:0]	 rdW;
-  	
+  	wire [`RFIDX_WIDTH-1:0] ReadData2Add=INSTRUCTION[24:20];;
 	wire [`XLEN-1:0]REALINDMEM;
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
 	wire jW, pcsrc;
@@ -102,7 +106,16 @@ wire B;
  	wire [`RFIDX_WIDTH-1:0]	 rdM;
 	// next PC logic (operates in fetch and decode)
 	wire [`ADDR_SIZE-1:0]	 pcplus4F, nextpcF, pcbranchD, pcadder2aD, pcadder2bD, pcbranch0D;
-	
+	wire [11:0]  ItypeIm = INSTRUCTION[31:20];
+	wire [11:0]		StypeIm	= {INSTRUCTION[31:25],INSTRUCTION[11:7]};
+	wire [11:0]  BtypeIm	= {INSTRUCTION[31],INSTRUCTION[7],INSTRUCTION[30:25],INSTRUCTION[11:8]};//INSTRUCTION[31], INSTRUCTION[7], INSTRUCTION[30:25], INSTRUCTION[11:8], 12 bits
+	wire [19:0]		UtypeIm	= INSTRUCTION[31:12];
+	wire [19:0]  JtypeIm	= {INSTRUCTION[31],INSTRUCTION[19:12],INSTRUCTION[20],INSTRUCTION[30:21]};
+	wire [`XLEN-1:0]	ImmResult;
+	wire [`XLEN-1:0]	rdata1D;
+	wire [`XLEN-1:0]	rdata2D;
+	wire [`XLEN-1:0]	 WriRe;
+	wire [`RFIDX_WIDTH-1:0]	waddrW;
 	mux2to1	    pcsrcmux(pcplus4F, pcbranchD, pcsrc, nextpcF);
 	
 	//wire pcChangeEn; 
@@ -127,27 +140,15 @@ assign pcplus4F = pcF + `ADDR_SIZE'b100;
 hazard USEHAZARD(STYPE,clk,memtoregE,rdE,ReadData1Add,ReadData2Add, regwriteE,STALLFlUSH, NOCHANGEIFIDREG,PCNOTCHANGE);
 
 	// ID阶段
-	wire [`RFIDX_WIDTH-1:0] ReadData2Add;
+	
 	assign  opD 	= INSTRUCTION[6:0];
 	//assign  rdD     = INSTRUCTION[11:7];
-wire[4:0]  rdD     = INSTRUCTION[11:7];
 
-	wire[4:0]  ReadData1Add   = INSTRUCTION[19:15];
-	wire[11:0]  immD    = INSTRUCTION[31:20];
 	assign  ReadData2Add   	= INSTRUCTION[24:20];
 	assign  funct7D = INSTRUCTION[31:25];
 	assign  funct3D = INSTRUCTION[14:12];
 	
-	wire [11:0]  ItypeIm = INSTRUCTION[31:20];
-	wire [11:0]		StypeIm	= {INSTRUCTION[31:25],INSTRUCTION[11:7]};
-	wire [11:0]  BtypeIm	= {INSTRUCTION[31],INSTRUCTION[7],INSTRUCTION[30:25],INSTRUCTION[11:8]};//INSTRUCTION[31], INSTRUCTION[7], INSTRUCTION[30:25], INSTRUCTION[11:8], 12 bits
-	wire [19:0]		UtypeIm	= INSTRUCTION[31:12];
-	wire [19:0]  JtypeIm	= {INSTRUCTION[31],INSTRUCTION[19:12],INSTRUCTION[20],INSTRUCTION[30:21]};
-	wire [`XLEN-1:0]	ImmResult;
-	wire [`XLEN-1:0]	rdata1D;
-	wire [`XLEN-1:0]	rdata2D;
-	wire [`XLEN-1:0]	 WriRe;
-	wire [`RFIDX_WIDTH-1:0]	waddrW;
+	
 
 	imm 	im(ItypeIm, StypeIm, BtypeIm, UtypeIm, JtypeIm, immctrlD, ImmResult);
 	//对立即数进行扩展
