@@ -49,6 +49,7 @@ module datapath(
 	wire lhM;
 	wire   sbM;
 	wire   shM;
+		wire jW, pcsrc;
 	wire [`XLEN-1:0] srcb1M;
 	wire[`ADDR_SIZE-1:0] PCoutM;
   wire flushW = 0;//fulsh在后面调整
@@ -101,7 +102,7 @@ wire B;
   	wire [`RFIDX_WIDTH-1:0] ReadData2Add=INSTRUCTION[24:20];
 	wire [`XLEN-1:0]REALINDMEM;
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
-	wire jW, pcsrc;
+
 		wire [`ADDR_SIZE-1:0]	pcplus4M;
  	wire [`RFIDX_WIDTH-1:0]	 rdM;
 	// next PC logic (operates in fetch and decode)
