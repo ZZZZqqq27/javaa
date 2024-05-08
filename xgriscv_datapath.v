@@ -40,7 +40,7 @@ module datapath(
 	//wire[4:0] ReadData1AddE;
 
 //wire[4:0]ReadData2AddE;
-
+	wire [`INSTR_SIZE-1:0]	INSTRUCTION;
 	wire MEMWBDATASELECT;
 	wire [`XLEN-1:0] dmoutM;
  wire 		regwriteM, luM, memtoregM, jM, bM;
@@ -98,7 +98,7 @@ wire STALLFlUSH;
 wire PCNOTCHANGE; 
 wire B;
   wire[`RFIDX_WIDTH-1:0]	 rdW;
-  	wire [`RFIDX_WIDTH-1:0] ReadData2Add=INSTRUCTION[24:20];;
+  	wire [`RFIDX_WIDTH-1:0] ReadData2Add=INSTRUCTION[24:20];
 	wire [`XLEN-1:0]REALINDMEM;
 	wire [`ADDR_SIZE-1:0]	pcplus4W;
 	wire jW, pcsrc;
@@ -116,6 +116,11 @@ wire B;
 	wire [`XLEN-1:0]	rdata2D;
 	wire [`XLEN-1:0]	 WriRe;
 	wire [`RFIDX_WIDTH-1:0]	waddrW;
+	
+	wire [`ADDR_SIZE-1:0]	pcD, pcplus4D;
+	wire flushD = pcsrc; 
+	wire regwriteW;
+	wire STALLFlUSH;
 	mux2to1	    pcsrcmux(pcplus4F, pcbranchD, pcsrc, nextpcF);
 	
 	//wire pcChangeEn; 
@@ -125,10 +130,7 @@ wire B;
 assign pcplus4F = pcF + `ADDR_SIZE'b100;
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// IF/ID pipeline registers
-	wire [`INSTR_SIZE-1:0]	INSTRUCTION;
-	wire [`ADDR_SIZE-1:0]	pcD, pcplus4D;
-	wire flushD = pcsrc; 
-	wire regwriteW;
+
 //wire stall help
 	floprcWITHNOCHANGE #(`INSTR_SIZE) 	pr1D(clk, resetHelp, flushD, NOCHANGEIFIDREG,instrF, INSTRUCTION);     // instruction,//contro register
 	floprcWITHNOCHANGE #(`ADDR_SIZE)	  pr2D(clk, resetHelp, flushD,NOCHANGEIFIDREG, pcF, pcD);           // pc
